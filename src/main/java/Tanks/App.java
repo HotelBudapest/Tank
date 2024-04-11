@@ -3,6 +3,7 @@ package Tanks;
 import org.checkerframework.checker.units.qual.A;
 import processing.core.PApplet;
 import processing.core.PImage;
+import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 import processing.event.KeyEvent;
@@ -28,7 +29,8 @@ public class App extends PApplet {
     public static final int BOARD_HEIGHT = 20;
     public int[][] board = new int[32][32];
     public int[][] treesLs = new int[32][32];
-    public ArrayList<Terrain> terrainLS = new ArrayList<Terrain>();
+    public Terrain terrain;
+    ArrayList<PVector> test = new ArrayList<PVector>();
     
     String trees;
     int R;
@@ -69,7 +71,7 @@ public class App extends PApplet {
         JSONObject json = loadJSONObject(configPath);
 
         JSONArray level = json.getJSONArray("levels");
-        JSONObject current = level.getJSONObject(  1);
+        JSONObject current = level.getJSONObject(  0);
         layout = current.getString("layout");
         backgroundImage = current.getString("background");
         String[] foregroundColour = current.getString("foreground-colour").split(",");
@@ -106,7 +108,18 @@ public class App extends PApplet {
                 i++;
             }
 
-            smoothArray(board);
+            for (int s = 0; s < board.length; s++){
+                for (int t = 0; t < board[0].length; t++){
+                    if (board[t][s] == 1){    
+                        System.out.println(s + " " + t);
+                        test.add(new PVector(s, t));
+                    }
+                }
+            }
+            
+
+            terrain = new Terrain(board, test);
+            //terrain.smoothArray();
 
             for (int k = 0; k < board.length; k++){
                 System.out.println(Arrays.toString(board[k]));
@@ -120,61 +133,6 @@ public class App extends PApplet {
                 e.printStackTrace();
             }
         
-
-    }
-
-
-
-    public void smoothArray(int[][] terrainArray){
-        int numRows = terrainArray.length;
-        int numCols = terrainArray[0].length;
-        int[] startPoints = new int[numCols];
-
-        // Step 1: Find the terrain start points for each column
-        for (int col = 0; col < numCols; col++) {
-            startPoints[col] = numRows; // Initialize with max value, assuming no terrain in this column
-            for (int row = 0; row < numRows; row++) {
-                if (terrainArray[row][col] == 1) {
-                    startPoints[col] = row;
-                    break;
-                }
-            }
-        }
-
-        // Step 2: Apply a simple moving average on the start points
-        int[] smoothedStartPoints = new int[numCols];
-        for (int col = 0; col < numCols; col++) {
-            int sum = startPoints[col];
-            int count = 1;
-            
-            // Include left neighbor
-            if (col > 0) {
-                sum += startPoints[col - 1];
-                count++;
-            }
-            
-            // Include right neighbor
-            if (col < numCols - 1) {
-                sum += startPoints[col + 1];
-                count++;
-            }
-            
-            smoothedStartPoints[col] = sum / count;
-        }
-
-        // Step 3: Adjust the terrain array based on the smoothed start points
-        for (int col = 0; col < numCols; col++) {
-            for (int row = 0; row < numRows; row++) {
-                if (row >= smoothedStartPoints[col]) {
-                    terrainArray[row][col] = 1; // Terrain
-                } else {
-                    terrainArray[row][col] = 0; // No terrain
-                }
-            }
-        }
-
-        // Now, terrainArray contains your smoothed terrain
-        board = terrainArray;
 
     }
 
@@ -240,38 +198,10 @@ public class App extends PApplet {
         background(255); 
         image(loadImage(backgroundImage), 0, 0, width, height);
 
-        fill(150); // Choose a color for your terrain
-        beginShape(); // Begin your terrain shape
-        
-        // The first and last points need to be added twice for curveVertex to work properly
-        // This is a workaround for the way Processing creates curves
-        float firstX = 0;
-        float firstY = findTerrainStart(0) * CELLSIZE; 
-        float lastX = (board[0].length - 1) * CELLSIZE;
-        float lastY = findTerrainStart(board[0].length - 1) * CELLSIZE;
-        
-        // Start with the bottom-left corner of the screen
-        vertex(0, height);
-        
-        // Add the first point twice
-        curveVertex(firstX, firstY);
-        curveVertex(firstX, firstY);
-        
-        // Add a curveVertex for each '1' in the terrain array
-        for (int col = 0; col < board[0].length; col++) {
-          float x = col * CELLSIZE;
-          float y = findTerrainStart(col) * CELLSIZE;
-          curveVertex(x, y);
-        }
-        
-        // Add the last point twice
-        curveVertex(lastX, lastY);
-        curveVertex(lastX, lastY);
-        
-        // Connect to the bottom-right corner of the screen
-        vertex(width, height);
-        
-        endShape(CLOSE); 
+        fill(255, 0, 0);
+        beginShape();
+        terrain.draw(this);
+        endShape(CLOSE);
 
         for (int i = 0; i < treesLs.length; i++){
             for (int j = 0; j < treesLs[0].length; j++){
