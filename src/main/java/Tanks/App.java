@@ -28,11 +28,13 @@ public class App extends PApplet {
     public static final int BOARD_WIDTH = WIDTH/CELLSIZE;
     public static final int BOARD_HEIGHT = 20;
     public int[][] board = new int[32][32];
-    public int[][] treesLs = new int[32][32];
+    ArrayList<Integer> treesLs = new ArrayList<Integer>();
     public Terrain terrain;
     ArrayList<PVector> test = new ArrayList<PVector>();
     
+    
     String trees;
+    public PImage treepic;
     int R;
     int G;
     int B;
@@ -81,7 +83,7 @@ public class App extends PApplet {
         B = Integer.parseInt(foregroundColour[2]);
         
         if(current.hasKey("trees")){
-            trees = current.getString("trees");
+            treepic = loadImage(current.getString("trees"));
         }
         else{
             trees = null;
@@ -102,7 +104,7 @@ public class App extends PApplet {
                         board[i][j] = 1;
                     }
                     else if (line_sep[j].equals("T")){
-                        treesLs[i][j] = 1;
+                        treesLs.add(j*10);
                     }
                 }
                 i++;
@@ -114,13 +116,11 @@ public class App extends PApplet {
                         for (float n = 0; n <= 1; n+=0.1f){
                             test.add(new PVector(s + n, t));
                         }
-                        
                     }
                 }
             }
             
-
-            terrain = new Terrain(test);
+            terrain = new Terrain(test, treesLs, treepic);
             
             terrain.smoothArray();
             terrain.smoothArray();
@@ -203,18 +203,13 @@ public class App extends PApplet {
         background(255); 
         image(loadImage(backgroundImage), 0, 0, width, height);
         
+        noStroke();
         fill(R, G, B);
         beginShape();
         terrain.draw(this);
         endShape(CLOSE);
 
-        for (int i = 0; i < treesLs.length; i++){
-            for (int j = 0; j < treesLs[0].length; j++){
-                if (treesLs[i][j] == 1){
-                    image(loadImage(trees), j*CELLSIZE, i*CELLSIZE, 30, 30);
-                }
-            }
-        }
+        terrain.drawTrees(this);
     }
 
 

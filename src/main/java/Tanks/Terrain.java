@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 
 public class Terrain  extends App{
     ArrayList<PVector> terrainCoordinates = new ArrayList<PVector>();
+    ArrayList<Integer> treesLs = new ArrayList<Integer>();
+    PImage treeLoc;
 
-    public Terrain(ArrayList<PVector> points){
+    public Terrain(ArrayList<PVector> points, ArrayList<Integer> trees, PImage treeLoc){
         this.terrainCoordinates = points;
+        this.treesLs = trees;
+        this.treeLoc = treeLoc;
     }
 
     public void smoothArray(){
@@ -42,6 +47,15 @@ public class Terrain  extends App{
             app.vertex(coord.x * CELLSIZE, coord.y * CELLSIZE);
           }
         app.vertex(app.width, app.height);
+    }
+
+    public void drawTrees(PApplet app){
+        if (this.treeLoc != null){
+            for (int i = 0; i < this.treesLs.size(); i++){
+                int current = treesLs.get(i);
+                app.image(treeLoc, (this.terrainCoordinates.get(current).x - 0.4f)*CELLSIZE, (this.terrainCoordinates.get(current).y - 0.8f)*CELLSIZE, 30, 30);
+            }
+        }
     }
     
 }
