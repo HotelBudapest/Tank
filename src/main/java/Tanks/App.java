@@ -110,20 +110,25 @@ public class App extends PApplet {
 
             for (int s = 0; s < board.length; s++){
                 for (int t = 0; t < board[0].length; t++){
-                    if (board[t][s] == 1){    
-                        System.out.println(s + " " + t);
-                        test.add(new PVector(s, t));
+                    if (board[t][s] == 1){
+                        for (float n = 0; n <= 1; n+=0.1f){
+                            test.add(new PVector(s + n, t));
+                        }
+                        
                     }
                 }
             }
             
 
-            terrain = new Terrain(board, test);
-            //terrain.smoothArray();
+            terrain = new Terrain(test);
+            
+            terrain.smoothArray();
+            terrain.smoothArray();
+            terrain.smoothArray();
+            terrain.smoothArray();
+            terrain.smoothArray();
+            terrain.smoothArray();
 
-            for (int k = 0; k < board.length; k++){
-                System.out.println(Arrays.toString(board[k]));
-            }
             reader.close();
             }
             catch(FileNotFoundException e){
@@ -197,8 +202,8 @@ public class App extends PApplet {
 
         background(255); 
         image(loadImage(backgroundImage), 0, 0, width, height);
-
-        fill(255, 0, 0);
+        
+        fill(R, G, B);
         beginShape();
         terrain.draw(this);
         endShape(CLOSE);
