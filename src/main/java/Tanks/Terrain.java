@@ -10,12 +10,14 @@ import processing.core.PVector;
 public class Terrain  extends App{
     ArrayList<PVector> terrainCoordinates = new ArrayList<PVector>();
     ArrayList<Integer> treesLs = new ArrayList<Integer>();
+    ArrayList<Integer> players = new ArrayList<Integer>();
     PImage treeLoc;
 
-    public Terrain(ArrayList<PVector> points, ArrayList<Integer> trees, PImage treeLoc){
+    public Terrain(ArrayList<PVector> points, ArrayList<Integer> trees, PImage treeLoc,ArrayList<Integer> player){
         this.terrainCoordinates = points;
         this.treesLs = trees;
         this.treeLoc = treeLoc;
+        this.players = player;
     }
 
     public void smoothArray(){
@@ -47,6 +49,14 @@ public class Terrain  extends App{
             app.vertex(coord.x * CELLSIZE, coord.y * CELLSIZE);
           }
         app.vertex(app.width, app.height);
+    }
+
+    public PVector[] getPlayerCoords(){
+        PVector [] result = new PVector[this.players.size()];
+        for (int i = 0; i < this.players.size(); i++){
+            result[i] = new PVector(this.terrainCoordinates.get(this.players.get(i) - 3).x - 0.3f, this.terrainCoordinates.get(this.players.get(i) - 3).y - 0.3f);
+        }
+        return result;
     }
 
     public void drawTrees(PApplet app){

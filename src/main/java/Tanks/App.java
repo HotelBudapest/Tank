@@ -31,7 +31,8 @@ public class App extends PApplet {
     ArrayList<Integer> treesLs = new ArrayList<Integer>();
     public Terrain terrain;
     ArrayList<PVector> test = new ArrayList<PVector>();
-    
+    ArrayList<Integer> playerLs = new ArrayList<Integer>();
+    ArrayList<player> playingOnBoard = new ArrayList<player>();
     
     String trees;
     public PImage treepic;
@@ -73,6 +74,7 @@ public class App extends PApplet {
         JSONObject json = loadJSONObject(configPath);
 
         JSONArray level = json.getJSONArray("levels");
+        //JSONArray players = json.getJSONArray("player_colours");
         JSONObject current = level.getJSONObject(  0);
         layout = current.getString("layout");
         backgroundImage = current.getString("background");
@@ -91,7 +93,6 @@ public class App extends PApplet {
 
         try{ 
 			BufferedReader reader = new BufferedReader(new FileReader(layout));
-			
             int i =0; 
             while (true){
                 String line = reader.readLine();
@@ -105,6 +106,12 @@ public class App extends PApplet {
                     }
                     else if (line_sep[j].equals("T")){
                         treesLs.add(j*10);
+                    }
+                    else if ((line_sep[j].equals("A")) || line_sep[j].equals("B") || line_sep[j].equals("C") || line_sep[j].equals("D")){ //((line_sep[j].equals("A")) || line_sep[j].equals("B") || line_sep[j].equals("C") || line_sep[j].equals("D"))
+                        /*playerLs.add(new player(new PVector(j*10, i), "A"));
+                        System.out.println(playerLs.get(lame).coordinates);
+                        lame++;*/
+                        playerLs.add(j*10);
                     }
                 }
                 i++;
@@ -120,14 +127,21 @@ public class App extends PApplet {
                 }
             }
             
-            terrain = new Terrain(test, treesLs, treepic);
+            terrain = new Terrain(test, treesLs, treepic, playerLs);
             
+            
+            /*terrain.smoothArray();
             terrain.smoothArray();
             terrain.smoothArray();
             terrain.smoothArray();
             terrain.smoothArray();
-            terrain.smoothArray();
-            terrain.smoothArray();
+            terrain.smoothArray();*/
+
+            PVector[] coords = terrain.getPlayerCoords();
+            for (int s =0; s < coords.length; s++){
+                playingOnBoard.add(new player(coords[s], "A"));
+                System.out.println(coords[s].x + " " + coords[s].y);
+            }
 
             reader.close();
             }
@@ -210,6 +224,11 @@ public class App extends PApplet {
         endShape(CLOSE);
 
         terrain.drawTrees(this);
+
+        for (int i =0; i < playingOnBoard.size(); i++){
+            playingOnBoard.get(i).draw(this);
+        }
+
     }
 
 
