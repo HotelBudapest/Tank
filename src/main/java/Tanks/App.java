@@ -33,6 +33,8 @@ public class App extends PApplet {
     ArrayList<PVector> test = new ArrayList<PVector>();
     ArrayList<Integer> playerLs = new ArrayList<Integer>();
     ArrayList<player> playingOnBoard = new ArrayList<player>();
+    player CurrentPlayer;
+    int turnManagerINT = 0;
     
     String trees;
     public PImage treepic;
@@ -130,18 +132,20 @@ public class App extends PApplet {
             terrain = new Terrain(test, treesLs, treepic, playerLs);
             
             
-            /*terrain.smoothArray();
             terrain.smoothArray();
             terrain.smoothArray();
             terrain.smoothArray();
             terrain.smoothArray();
-            terrain.smoothArray();*/
+            terrain.smoothArray();
+            terrain.smoothArray();
 
             PVector[] coords = terrain.getPlayerCoords();
             for (int s =0; s < coords.length; s++){
                 playingOnBoard.add(new player(coords[s], "A"));
                 System.out.println(coords[s].x + " " + coords[s].y);
             }
+
+            CurrentPlayer = playingOnBoard.get(0);
 
             reader.close();
             }
@@ -155,12 +159,31 @@ public class App extends PApplet {
 
     }
 
+    public void manageTurns(int n){
+        CurrentPlayer = playingOnBoard.get(n%(playingOnBoard.size())); 
+    }
+
     /**
      * Receive key pressed signal from the keyboard.
      */
 	@Override
     public void keyPressed(KeyEvent event){
-        
+        if (key == ' '){
+            turnManagerINT++;
+            manageTurns(turnManagerINT);
+        }
+        if (key == CODED) {
+            if (keyCode == LEFT) {
+                CurrentPlayer.move(terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f);
+                terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 1);
+                draw();
+            } 
+            else if (keyCode == RIGHT) {
+                CurrentPlayer.move(terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 2).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 2).y - 0.3f);
+                terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) + 1);
+                draw();
+            }
+        }
     }
 
     /**
@@ -226,7 +249,11 @@ public class App extends PApplet {
         terrain.drawTrees(this);
 
         for (int i =0; i < playingOnBoard.size(); i++){
-            playingOnBoard.get(i).draw(this);
+            player current = playingOnBoard.get(i);
+            current.draw(this);
+            if (current == CurrentPlayer){
+                current.drawLine(this);
+            }
         }
 
     }
