@@ -176,12 +176,25 @@ public class App extends PApplet {
             if (keyCode == LEFT) {
                 CurrentPlayer.move(terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f);
                 terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 1);
-                draw();
+                CurrentPlayer.draw(this);
             } 
             else if (keyCode == RIGHT) {
                 CurrentPlayer.move(terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 2).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 2).y - 0.3f);
                 terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) + 1);
-                draw();
+                CurrentPlayer.draw(this);
+            }
+            if ((keyCode == UP) && (CurrentPlayer.turretAngle > Math.toRadians(0))){
+                float changeX = ((CurrentPlayer.coordinates.x + (CurrentPlayer.coordinates.x + 1))/2 - (2/CELLSIZE)) + (float)((Math.cos(CurrentPlayer.turretAngle + Math.toRadians(3))));
+                float changeY = CurrentPlayer.coordinates.y - (float)((Math.sin(CurrentPlayer.turretAngle + Math.toRadians(3))));
+                CurrentPlayer.moveTurret(changeX, changeY);
+                CurrentPlayer.turretAngle -= Math.toRadians(3);
+                System.out.println(changeX + " " + changeY);
+            } else if ((keyCode == DOWN)  && (CurrentPlayer.turretAngle <= Math.toRadians(180))){
+                float changeX = ((CurrentPlayer.coordinates.x + (CurrentPlayer.coordinates.x + 1))/2 - (2/CELLSIZE)) + (float)((Math.cos(CurrentPlayer.turretAngle - Math.toRadians(3))));
+                float changeY =  CurrentPlayer.coordinates.y - (float)((Math.sin(CurrentPlayer.turretAngle - Math.toRadians(3))));
+                CurrentPlayer.moveTurret(changeX, changeY);
+                CurrentPlayer.turretAngle += Math.toRadians(3);
+                System.out.println(changeX + " " + changeY);
             }
         }
     }
