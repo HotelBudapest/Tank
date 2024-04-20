@@ -41,13 +41,14 @@ public class player extends App{
         app.line(this.coordinates.x*CELLSIZE, (this.coordinates.y)*CELLSIZE - 65, this.coordinates.x*CELLSIZE + 12, (this.coordinates.y)*CELLSIZE - 45);
         app.line(this.coordinates.x*CELLSIZE + 24, (this.coordinates.y)*CELLSIZE - 65, this.coordinates.x*CELLSIZE + 12, (this.coordinates.y)*CELLSIZE - 45);
         app.noStroke();
-        // Draw the arrowhead
     }
 
     public void move(float changedX, float changedY){
+        float changeForTurretX = this.coordinates.x - changedX;
+        float changeForTurretY = this.coordinates.y - changedY;
         this.coordinates.x = changedX;
         this.coordinates.y = changedY;
-        turretCoord = new PVector((this.coordinates.x + (this.coordinates.x + 1))/2, (this.coordinates.y - ((float)15/CELLSIZE)));
+        this.turretCoord = new PVector(this.turretCoord.x - changeForTurretX, this.turretCoord.y - changeForTurretY);
     }
 
     public void moveTurret(float changedX, float changedY){
