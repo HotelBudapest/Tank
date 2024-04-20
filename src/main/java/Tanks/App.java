@@ -173,12 +173,12 @@ public class App extends PApplet {
             manageTurns(turnManagerINT);
         }
         if (key == CODED) {
-            if (keyCode == LEFT) {
+            if ((keyCode == LEFT) && (terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4 > 1)){
                 CurrentPlayer.move(terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f);
                 terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 1);
                 CurrentPlayer.draw(this);
             } 
-            else if (keyCode == RIGHT) {
+            else if ((keyCode == RIGHT) &&(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 2 < 265)){
                 CurrentPlayer.move(terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 2).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 2).y - 0.3f);
                 terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) + 1);
                 CurrentPlayer.draw(this);
