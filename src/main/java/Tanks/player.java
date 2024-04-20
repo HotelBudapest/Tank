@@ -9,22 +9,22 @@ public class player extends App{
     public String type; 
     public PVector turretCoord;
     public double turretAngle = Math.toRadians(90);
+    public int[] color;
 
-    public player(PVector coord, String typ){ //, PVector coordinateL, PVector coordinateR
+    public player(PVector coord, String typ, int[] color){ //, PVector coordinateL, PVector coordinateR
         this.coordinates = coord;
-        this.type = type;
+        this.type = typ;
         this.turretCoord = new PVector((this.coordinates.x + (this.coordinates.x + 1))/2, (this.coordinates.y - ((float)15/CELLSIZE)));
-        //this.coordinateL = coordinateL;
-        //this.coordinatesR = coordinateR;
+        this.color = color;
     }
 
     public void draw(PApplet app){
-        app.fill(0, 0, 255);
+        app.fill(this.color[0], this.color[1], this.color[2]);
         app.rect((this.coordinates.x)*CELLSIZE + 2, (this.coordinates.y)*CELLSIZE, 20, 8, 10);
-        app.fill(0, 0, 255);
+        app.fill(this.color[0], this.color[1], this.color[2]);
         app.rect((this.coordinates.x)*CELLSIZE, (this.coordinates.y + 0.1f)*CELLSIZE, 25, 8, 10);
         app.stroke(0);
-        app.strokeWeight(2);
+        app.strokeWeight(4);
         //app.line(this.coordinates.x*CELLSIZE, this.coordinates.y*CELLSIZE, this.coordinates.x*CELLSIZE, this.coordinates.y*CELLSIZE - 10);
         app.line((this.coordinates.x + (this.coordinates.x + 1))/2*CELLSIZE - 2 , this.coordinates.y*CELLSIZE, this.turretCoord.x*CELLSIZE - 2, turretCoord.y*CELLSIZE);
         app.noStroke();

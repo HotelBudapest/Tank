@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 public class App extends PApplet {
 
@@ -31,11 +32,12 @@ public class App extends PApplet {
     ArrayList<Integer> treesLs = new ArrayList<Integer>();
     public Terrain terrain;
     ArrayList<PVector> test = new ArrayList<PVector>();
-    ArrayList<Integer> playerLs = new ArrayList<Integer>();
+    HashMap<String, Integer> playerLs = new HashMap<String, Integer>();
     ArrayList<player> playingOnBoard = new ArrayList<player>();
+    public HashMap<String ,int[]> playerColorValues = new HashMap<String ,int[]>();
     player CurrentPlayer;
     int turnManagerINT = 0;
-    
+
     String trees;
     public PImage treepic;
     int R;
@@ -76,7 +78,6 @@ public class App extends PApplet {
         JSONObject json = loadJSONObject(configPath);
 
         JSONArray level = json.getJSONArray("levels");
-        //JSONArray players = json.getJSONArray("player_colours");
         JSONObject current = level.getJSONObject(  0);
         layout = current.getString("layout");
         backgroundImage = current.getString("background");
@@ -85,6 +86,26 @@ public class App extends PApplet {
         R = Integer.parseInt(foregroundColour[0]);
         G = Integer.parseInt(foregroundColour[1]);
         B = Integer.parseInt(foregroundColour[2]);
+        JSONObject playerColoursJson = json.getJSONObject("player_colours");
+        String[] playerTypes = {"A", "B", "C", "D", "E"};
+        for (String type : playerTypes) {
+            // Check if the type exists in the JSON
+            if (playerColoursJson.hasKey(type)) {
+                String colorStr = playerColoursJson.getString(type);
+                String[] colorComponents = colorStr.split(",");
+                int[] colorValues = new int[colorComponents.length];
+                for (int k = 0; k < colorComponents.length; k++) {
+                    colorValues[k] = Integer.parseInt(colorComponents[k]);
+                }
+                playerColorValues.put(type, colorValues);
+            }
+        }
+
+        for (int k = 0; k < playerColorValues.size(); k++) {
+            int[] color = playerColorValues.get(playerTypes[k]);
+            System.out.println("Player " + playerTypes[k] + " Color: R=" + color[0] + " G=" + color[1] + " B=" + color[2]);
+        }
+
         
         if(current.hasKey("trees")){
             treepic = loadImage(current.getString("trees"));
@@ -109,11 +130,25 @@ public class App extends PApplet {
                     else if (line_sep[j].equals("T")){
                         treesLs.add(j*10);
                     }
-                    else if ((line_sep[j].equals("A")) || line_sep[j].equals("B") || line_sep[j].equals("C") || line_sep[j].equals("D")){ //((line_sep[j].equals("A")) || line_sep[j].equals("B") || line_sep[j].equals("C") || line_sep[j].equals("D"))
+                    else if ((line_sep[j].equals("A")) || line_sep[j].equals("B") || line_sep[j].equals("C") || line_sep[j].equals("D") || line_sep[j].equals("E")){ //((line_sep[j].equals("A")) || line_sep[j].equals("B") || line_sep[j].equals("C") || line_sep[j].equals("D"))
                         /*playerLs.add(new player(new PVector(j*10, i), "A"));
                         System.out.println(playerLs.get(lame).coordinates);
                         lame++;*/
-                        playerLs.add(j*10);
+                        if (line_sep[j].equals("A")){
+                            playerLs.put("A",j*10);
+                        }
+                        else if (line_sep[j].equals("B")){
+                            playerLs.put("B",j*10);
+                        }
+                        else if (line_sep[j].equals("C")){   
+                            playerLs.put("C",j*10);
+                        }
+                        else if (line_sep[j].equals("D")){  
+                            playerLs.put("D",j*10);
+                        }
+                        else if (line_sep[j].equals("E")){  
+                            playerLs.put("E",j*10);
+                        }
                     }
                 }
                 i++;
@@ -128,8 +163,34 @@ public class App extends PApplet {
                     }
                 }
             }
+
+            Map<String, Integer> sortedMap = new TreeMap<>(playerLs);
             
-            terrain = new Terrain(test, treesLs, treepic, playerLs);
+            ArrayList<Integer> sortedplayer = new ArrayList<Integer>();
+            for (int k = 0; k < sortedMap.size(); k++){
+                if (k == 0){
+                    String srt = "A";
+                    sortedplayer.add(sortedMap.get(srt));
+                }
+                else if (k == 1){
+                    String srt = "B";
+                    sortedplayer.add(sortedMap.get(srt));
+                }
+                else if (k == 2){
+                    String srt = "C";
+                    sortedplayer.add(sortedMap.get(srt));
+                }
+                else if (k == 3){
+                    String srt = "D";
+                    sortedplayer.add(sortedMap.get(srt));
+                }
+                else if (k == 4){
+                    String srt = "E";
+                    sortedplayer.add(sortedMap.get(srt));
+                }
+            }
+
+            terrain = new Terrain(test, treesLs, treepic, sortedplayer);
             
             
             terrain.smoothArray();
@@ -141,8 +202,27 @@ public class App extends PApplet {
 
             PVector[] coords = terrain.getPlayerCoords();
             for (int s =0; s < coords.length; s++){
-                playingOnBoard.add(new player(coords[s], "A"));
-                System.out.println(coords[s].x + " " + coords[s].y);
+                if (s == 0){
+                    String srt = "A";
+                    playingOnBoard.add(new player(coords[s], srt, playerColorValues.get(srt)));
+                }
+                else if (s == 1){
+                    String srt = "B";
+                    playingOnBoard.add(new player(coords[s], srt, playerColorValues.get(srt)));
+                }
+                else if (s == 2){
+                    String srt = "C";
+                    playingOnBoard.add(new player(coords[s], srt, playerColorValues.get(srt)));
+                }
+                else if (s == 3){
+                    String srt = "D";
+                    playingOnBoard.add(new player(coords[s], srt, playerColorValues.get(srt)));
+                }
+                else if (s == 4){
+                    String srt = "E";
+                    playingOnBoard.add(new player(coords[s], srt, playerColorValues.get(srt)));
+                }
+                System.out.println(coords[s].x + " " + coords[s].y + " " + playingOnBoard.get(s).type);
             }
 
             CurrentPlayer = playingOnBoard.get(0);
