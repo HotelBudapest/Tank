@@ -78,7 +78,7 @@ public class App extends PApplet {
         JSONObject json = loadJSONObject(configPath);
 
         JSONArray level = json.getJSONArray("levels");
-        JSONObject current = level.getJSONObject(  0);
+        JSONObject current = level.getJSONObject( 0);
         layout = current.getString("layout");
         backgroundImage = current.getString("background");
         String[] foregroundColour = current.getString("foreground-colour").split(",");
@@ -100,12 +100,6 @@ public class App extends PApplet {
                 playerColorValues.put(type, colorValues);
             }
         }
-
-        for (int k = 0; k < playerColorValues.size(); k++) {
-            int[] color = playerColorValues.get(playerTypes[k]);
-            System.out.println("Player " + playerTypes[k] + " Color: R=" + color[0] + " G=" + color[1] + " B=" + color[2]);
-        }
-
         
         if(current.hasKey("trees")){
             treepic = loadImage(current.getString("trees"));
