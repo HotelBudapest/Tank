@@ -37,6 +37,9 @@ public class App extends PApplet {
     public HashMap<String ,int[]> playerColorValues = new HashMap<String ,int[]>();
     player CurrentPlayer;
     int turnManagerINT = 0;
+    ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+    HUD HUD;
+
 
     String trees;
     public PImage treepic;
@@ -78,7 +81,7 @@ public class App extends PApplet {
         JSONObject json = loadJSONObject(configPath);
 
         JSONArray level = json.getJSONArray("levels");
-        JSONObject current = level.getJSONObject( 0);
+        JSONObject current = level.getJSONObject( 1);
         layout = current.getString("layout");
         backgroundImage = current.getString("background");
         String[] foregroundColour = current.getString("foreground-colour").split(",");
@@ -100,7 +103,7 @@ public class App extends PApplet {
                 playerColorValues.put(type, colorValues);
             }
         }
-        
+
         if(current.hasKey("trees")){
             treepic = loadImage(current.getString("trees"));
         }
@@ -193,6 +196,7 @@ public class App extends PApplet {
             terrain.smoothArray();
             terrain.smoothArray();
             terrain.smoothArray();
+            
 
             PVector[] coords = terrain.getPlayerCoords();
             for (int s =0; s < coords.length; s++){
@@ -221,6 +225,8 @@ public class App extends PApplet {
 
             CurrentPlayer = playingOnBoard.get(0);
 
+            HUD = new HUD();
+
             reader.close();
             }
             catch(FileNotFoundException e){
@@ -243,6 +249,8 @@ public class App extends PApplet {
 	@Override
     public void keyPressed(KeyEvent event){
         if (key == ' '){
+            Projectile proj = new Projectile(CurrentPlayer.turretCoord, CurrentPlayer.power, CurrentPlayer.turretAngle);
+            projectiles.add(proj);
             turnManagerINT++;
             manageTurns(turnManagerINT);
         }
@@ -269,6 +277,12 @@ public class App extends PApplet {
                 CurrentPlayer.moveTurret(changeX, changeY);
             }
         }
+        if (key == 'W' || key == 'w') {
+            CurrentPlayer.power += 36/FPS;
+        }
+        if (key == 'S' || key == 's') {
+            CurrentPlayer.power -= 36/FPS;
+        }
     }
 
     /**
@@ -290,15 +304,6 @@ public class App extends PApplet {
     public void mouseReleased(MouseEvent e) {
 
     }
-
-    float findTerrainStart(int col) {
-        for (int row = 0; row < board.length; row++) {
-          if (board[row][col] == 1) {
-            return row;
-          }
-        }
-        return board.length; // Return the bottom if no '1' is found
-      }
 
     /**
      * Draw all elements in the game by current frame.
@@ -333,11 +338,30 @@ public class App extends PApplet {
 
         terrain.drawTrees(this);
 
+        fill(0);
+        textSize(20);
+        text("Player " + CurrentPlayer.type + "'s Turn", CELLSIZE, CELLSIZE);
+       
+        fill(0);
+        textSize(20);
+        text("Power: " + CurrentPlayer.power, CELLSIZE, 2*CELLSIZE); 
+        
+        //HUD.display(this);
+
         for (int i =0; i < playingOnBoard.size(); i++){
             player current = playingOnBoard.get(i);
             current.draw(this);
             if (current == CurrentPlayer){
                 current.drawLine(this);
+            }
+        }
+
+        for (int s = 0; s < projectiles.size(); s++){
+            Projectile proj = projectiles.get(s);
+            proj.update();
+            proj.display(this);
+            if (proj.position.x){
+                
             }
         }
 

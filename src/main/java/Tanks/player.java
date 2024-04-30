@@ -8,9 +8,11 @@ public class player extends App{
     public PVector coordinates;
     public String type; 
     public PVector turretCoord;
-    public double turretAngle = Math.toRadians(90);
+    public float turretAngle = (float) Math.toRadians(90);
     public int[] color;
     public int health;
+    public int power;
+    public int score;
 
     public player(PVector coord, String typ, int[] color){ //, PVector coordinateL, PVector coordinateR
         this.coordinates = coord;
@@ -18,9 +20,12 @@ public class player extends App{
         this.turretCoord = new PVector((this.coordinates.x + (this.coordinates.x + 1))/2, (this.coordinates.y - ((float)15/CELLSIZE)));
         this.color = color;
         this.health = 100;
+        this.score = 0;
+        this.power = 0;
     }
 
     public void draw(PApplet app){
+        app.noStroke();
         app.fill(this.color[0], this.color[1], this.color[2]);
         app.rect((this.coordinates.x)*CELLSIZE + 2, (this.coordinates.y)*CELLSIZE, 20, 8, 10);
         app.fill(this.color[0], this.color[1], this.color[2]);
