@@ -39,7 +39,7 @@ public class App extends PApplet {
     int turnManagerINT = 0;
     ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
     HUD HUD;
-
+    HashMap<Float, Float> explosiveCoords = new HashMap<Float, Float>();
 
     String trees;
     public PImage treepic;
@@ -81,7 +81,7 @@ public class App extends PApplet {
         JSONObject json = loadJSONObject(configPath);
 
         JSONArray level = json.getJSONArray("levels");
-        JSONObject current = level.getJSONObject( 1);
+        JSONObject current = level.getJSONObject( 0);
         layout = current.getString("layout");
         backgroundImage = current.getString("background");
         String[] foregroundColour = current.getString("foreground-colour").split(",");
@@ -125,26 +125,26 @@ public class App extends PApplet {
                         board[i][j] = 1;
                     }
                     else if (line_sep[j].equals("T")){
-                        treesLs.add(j*10);
+                        treesLs.add(j*CELLSIZE);
                     }
                     else if ((line_sep[j].equals("A")) || line_sep[j].equals("B") || line_sep[j].equals("C") || line_sep[j].equals("D") || line_sep[j].equals("E")){ //((line_sep[j].equals("A")) || line_sep[j].equals("B") || line_sep[j].equals("C") || line_sep[j].equals("D"))
                         /*playerLs.add(new player(new PVector(j*10, i), "A"));
                         System.out.println(playerLs.get(lame).coordinates);
                         lame++;*/
                         if (line_sep[j].equals("A")){
-                            playerLs.put("A",j*10);
+                            playerLs.put("A",j*CELLSIZE);
                         }
                         else if (line_sep[j].equals("B")){
-                            playerLs.put("B",j*10);
+                            playerLs.put("B",j*CELLSIZE);
                         }
                         else if (line_sep[j].equals("C")){   
-                            playerLs.put("C",j*10);
+                            playerLs.put("C",j*CELLSIZE);
                         }
                         else if (line_sep[j].equals("D")){  
-                            playerLs.put("D",j*10);
+                            playerLs.put("D",j*CELLSIZE);
                         }
                         else if (line_sep[j].equals("E")){  
-                            playerLs.put("E",j*10);
+                            playerLs.put("E",j*CELLSIZE);
                         }
                     }
                 }
@@ -154,8 +154,12 @@ public class App extends PApplet {
             for (int s = 0; s < board.length; s++){
                 for (int t = 0; t < board[0].length; t++){
                     if (board[t][s] == 1){
-                        for (float n = 0; n <= 1; n+=0.1f){
+                        /*for (float n = 0; n <= 1; n+=0.1f){
                             test.add(new PVector(s + n, t));
+                        }*/
+                        for (int b =0; b < 32; b++){
+                            Terrain.heights.add(t*CELLSIZE);
+                            //Terrain.widths.add((s + b));
                         }
                     }
                 }
@@ -189,43 +193,43 @@ public class App extends PApplet {
 
             terrain = new Terrain(test, treesLs, treepic, sortedplayer);
             
-            
             terrain.smoothArray();
-            terrain.smoothArray();
-            terrain.smoothArray();
-            terrain.smoothArray();
-            terrain.smoothArray();
-            terrain.smoothArray();
+
+            for (int j = 0; j < terrain.terrainCoordinates.size(); j++){
+                explosiveCoords.put(terrain.terrainCoordinates.get(j).x*CELLSIZE, terrain.terrainCoordinates.get(j).y*CELLSIZE);
+            }
             
 
-            PVector[] coords = terrain.getPlayerCoords();
-            for (int s =0; s < coords.length; s++){
+            int[] coordsX = terrain.getPlayerCoordsX();
+            float[] coordsY = terrain.getPlayerCoordsY();
+
+            for (int s =0; s < coordsY.length; s++){
                 if (s == 0){
                     String srt = "A";
-                    playingOnBoard.add(new player(coords[s], srt, playerColorValues.get(srt)));
+                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
                 }
                 else if (s == 1){
                     String srt = "B";
-                    playingOnBoard.add(new player(coords[s], srt, playerColorValues.get(srt)));
+                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
                 }
                 else if (s == 2){
                     String srt = "C";
-                    playingOnBoard.add(new player(coords[s], srt, playerColorValues.get(srt)));
+                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
                 }
                 else if (s == 3){
                     String srt = "D";
-                    playingOnBoard.add(new player(coords[s], srt, playerColorValues.get(srt)));
+                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
                 }
                 else if (s == 4){
                     String srt = "E";
-                    playingOnBoard.add(new player(coords[s], srt, playerColorValues.get(srt)));
+                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
                 }
-                System.out.println(coords[s].x + " " + coords[s].y + " " + playingOnBoard.get(s).type);
+                System.out.println(coordsX[s] + " " + coordsY[s] + " " + playingOnBoard.get(s).type);
             }
 
             CurrentPlayer = playingOnBoard.get(0);
 
-            HUD = new HUD();
+            //HUD = new HUD();
 
             reader.close();
             }
@@ -249,32 +253,46 @@ public class App extends PApplet {
 	@Override
     public void keyPressed(KeyEvent event){
         if (key == ' '){
-            Projectile proj = new Projectile(CurrentPlayer.turretCoord, CurrentPlayer.power, CurrentPlayer.turretAngle);
+            System.out.println("Coordinates of Turrent's open end WHILE shooting: " + CurrentPlayer.turretCoord);
+            System.out.println("ANGLE of Turrent's open end WHILE shooting: " + CurrentPlayer.turretAngle);
+            
+            Projectile proj = new Projectile(CurrentPlayer.turretCoord.x - 15, CurrentPlayer.turretCoord.y, CurrentPlayer.power, CurrentPlayer.turretAngle);
             projectiles.add(proj);
             turnManagerINT++;
             manageTurns(turnManagerINT);
         }
         if (key == CODED) {
-            if ((keyCode == LEFT) && (terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4 > 1)){
-                CurrentPlayer.move(terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f);
+            if ((keyCode == LEFT) && (CurrentPlayer.x - 2 > 2)){ // terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f
+                CurrentPlayer.move(CurrentPlayer.x - 1, Terrain.terrainForExplosion.get(CurrentPlayer.x - 1) - 1); // 
                 terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 1);
                 CurrentPlayer.draw(this);
             } 
-            else if ((keyCode == RIGHT) &&(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 2 < 265)){
-                CurrentPlayer.move(terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 2).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 2).y - 0.3f);
-                terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) + 1);
+            else if ((keyCode == RIGHT) &&(CurrentPlayer.x + 2 < WIDTH - 2)){
+                CurrentPlayer.move(CurrentPlayer.x + 1, Terrain.terrainForExplosion.get(CurrentPlayer.x + 1) - 1); // , terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f
+                terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 1);
                 CurrentPlayer.draw(this);
             }
             if ((keyCode == UP) && (CurrentPlayer.turretAngle > Math.toRadians(0))){
+                System.out.println("Coordinates of Turrent's open end BEFORE changing turret angle: " + CurrentPlayer.turretCoord);
+                System.out.println("ANGLE of Turrent's open end BEFORE changing turret angle: " + CurrentPlayer.turretAngle);
                 CurrentPlayer.turretAngle -= Math.toRadians(3);
-                float changeX = ((CurrentPlayer.coordinates.x + (CurrentPlayer.coordinates.x + 1))/2 - (2/CELLSIZE)) + (float)((0.45)*((Math.cos(CurrentPlayer.turretAngle + Math.toRadians(3)))));
-                float changeY = CurrentPlayer.coordinates.y - (float)((0.45)*((Math.sin(CurrentPlayer.turretAngle + Math.toRadians(3)))));
+                float changeX = ((CurrentPlayer.x + (CurrentPlayer.x + CELLSIZE))/2) + (float)((15)*((Math.cos(CurrentPlayer.turretAngle))));
+                float changeY = CurrentPlayer.y - (float)((15)*((Math.sin(CurrentPlayer.turretAngle))));
                 CurrentPlayer.moveTurret(changeX, changeY);
+                System.out.println("ANGLE of Turrent's open end AFTER changing turret angle: " + CurrentPlayer.turretAngle);
+                System.out.println("Coordinates of Turrent's open end AFTER changing turret angle: " + CurrentPlayer.turretCoord);
             } else if ((keyCode == DOWN)  && (CurrentPlayer.turretAngle <= Math.toRadians(180))){
+                System.out.println("Coordinates of Turrent's open end BEFORE changing turret angle: " + CurrentPlayer.turretCoord);
+                System.out.println("ANGLE of Turrent's open end BEFORE changing turret angle: " + CurrentPlayer.turretAngle);
                 CurrentPlayer.turretAngle += Math.toRadians(3);
-                float changeX = ((CurrentPlayer.coordinates.x + (CurrentPlayer.coordinates.x + 1))/2 - (2/CELLSIZE)) + (float)((0.45)*((Math.cos(CurrentPlayer.turretAngle - Math.toRadians(3)))));
-                float changeY =  CurrentPlayer.coordinates.y - (float)((0.45)*((Math.sin(CurrentPlayer.turretAngle - Math.toRadians(3)))));
+                float changeX = ((CurrentPlayer.x + (CurrentPlayer.x + CELLSIZE))/2) + (float)((15)*((Math.cos(CurrentPlayer.turretAngle))));
+                float changeY = CurrentPlayer.y - (float)((15)*((Math.sin(CurrentPlayer.turretAngle))));
                 CurrentPlayer.moveTurret(changeX, changeY);
+                System.out.println("ANGLE of Turrent's open end AFTER changing turret angle: " + CurrentPlayer.turretAngle);
+                System.out.println("Coordinates of Turrent's open end AFTER changing turret angle: " + CurrentPlayer.turretCoord);
+                //float changeX = ((CurrentPlayer.x + (CurrentPlayer.x + 1))/2 - (2/CELLSIZE)) + (float)((0.45)*((Math.cos(CurrentPlayer.turretAngle - Math.toRadians(3)))));
+                //float changeY =  CurrentPlayer.y - (float)((0.45)*((Math.sin(CurrentPlayer.turretAngle - Math.toRadians(3)))));
+                //CurrentPlayer.moveTurret(changeX, changeY);
             }
         }
         if (key == 'W' || key == 'w') {
@@ -327,14 +345,11 @@ public class App extends PApplet {
 
         //TODO: Check user action
 
-        background(255); 
+        //background(255);
         image(loadImage(backgroundImage), 0, 0, width, height);
-        
-        noStroke();
+
         fill(R, G, B);
-        beginShape();
         terrain.draw(this);
-        endShape(CLOSE);
 
         terrain.drawTrees(this);
 
@@ -360,11 +375,20 @@ public class App extends PApplet {
             Projectile proj = projectiles.get(s);
             proj.update();
             proj.display(this);
-            if (proj.position.x){
+            //System.out.println(explosiveCoords.get(proj.x));
+            
+            if (proj.y >= Terrain.terrainForExplosion.get((int) proj.x)) {
                 
+                ArrayList<Float> terrainChanged = explosion.alterTerrain((int)proj.x, proj.y);
+                System.out.println(terrainChanged.size() == terrain.terrainCoordinates.size());
+                noStroke();
+                explosion.drawExplosion(this, proj.x, proj.y);
+                for (int i = 0; i < terrain.terrainCoordinates.size(); i++){
+                    terrain.terrainCoordinates.set(i, new PVector(i, terrainChanged.get(i)/CELLSIZE));
+                }
+                projectiles.remove(s);
             }
         }
-
     }
 
 

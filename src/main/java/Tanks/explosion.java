@@ -1,0 +1,65 @@
+package Tanks;
+
+import java.util.*;
+public class explosion {
+    public static float terrainHeightBefore = 0.0f;
+    public static float terrainHeightAfter = 0.0f;
+    public static final int[] INNER = new int[] { 253, 248, 172 };
+    public static final int[] MIDDLE = new int[] { 255, 135, 33 };
+    public static final int[] OUTER = new int[] { 252, 1, 4 };
+
+    public static final int INNER_RADIUS = 10;
+    public static final int MIDDLE_RADIUS = 20;
+    public static final int OUTER_RADIUS = 30;
+
+    public static ArrayList<Float> alterTerrain(int xc, float yc) {
+        final float r = 30f; // Radius of the effect
+
+        for (int i = Math.max(0, xc - (int) r); i < Math.min(Terrain.terrainForExplosion.size(), xc + (int) r); i++) {
+            // Calculate the horizontal distance from the center of the explosion
+            float d = Math.abs(i - xc);
+            // Calculate the height of the semicircle at this distance
+            float semiCircleHeight = (float) Math.sqrt(Math.max(0, r * r - d * d));
+
+            // Since y increases downwards in computer graphics, we have to "add" to lower
+            // the terrain for the crater
+            if (Terrain.terrainForExplosion.get(i)< yc + semiCircleHeight && Terrain.terrainForExplosion.get(i) > yc - semiCircleHeight) {
+                // Lower the terrain to yc + the semicircle height to create a crater
+                terrainHeightBefore = Terrain.terrainForExplosion.get(i);
+                Terrain.terrainForExplosion.set(i,yc + semiCircleHeight);
+                terrainHeightAfter = Terrain.terrainForExplosion.get(i);
+            } else if (Terrain.terrainForExplosion.get(i) < yc - semiCircleHeight) {
+                // If the terrain is above the explosion (lower y value), we add to it to
+                // "lower" it in screen space
+                terrainHeightBefore = Terrain.terrainForExplosion.get(i);
+                Terrain.terrainForExplosion.set(i, Terrain.terrainForExplosion.get(i) + 2 * semiCircleHeight);
+                // Ensure the terrain does not go below (higher on screen) the semicircle height
+                Terrain.terrainForExplosion.set(i, Math.min(Terrain.terrainForExplosion.get(i), yc + semiCircleHeight));
+                terrainHeightAfter = Terrain.terrainForExplosion.get(i);
+            }
+        }
+
+        return Terrain.terrainForExplosion;
+    }
+
+    public static void drawExplosion(App app, float x, float y) {
+        for (int i = 0; i < 6; i++) {
+          if (i == 0 || i == 1) {
+            app.fill(INNER[0], INNER[1], INNER[2]);
+            app.ellipse(x, y, INNER_RADIUS * 2, INNER_RADIUS * 2);
+          } else if (i == 2 || i == 3) {
+            app.fill(MIDDLE[0], MIDDLE[1], MIDDLE[2]);
+            app.ellipse(x, y, MIDDLE_RADIUS * 2, MIDDLE_RADIUS * 2);
+            app.fill(INNER[0], INNER[1], INNER[2]);
+            app.ellipse(x, y, INNER_RADIUS * 2, INNER_RADIUS * 2);
+          } else {
+            app.fill(OUTER[0], OUTER[1], OUTER[2]);
+            app.ellipse(x, y, OUTER_RADIUS * 2, OUTER_RADIUS * 2);
+            app.fill(MIDDLE[0], MIDDLE[1], MIDDLE[2]);
+            app.ellipse(x, y, MIDDLE_RADIUS * 2, MIDDLE_RADIUS * 2);
+            app.fill(INNER[0], INNER[1], INNER[2]);
+            app.ellipse(x, y, INNER_RADIUS * 2, INNER_RADIUS * 2);
+          }
+        }
+      }
+}

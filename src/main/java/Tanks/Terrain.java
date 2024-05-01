@@ -1,7 +1,9 @@
 package Tanks;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -12,6 +14,9 @@ public class Terrain  extends App{
     ArrayList<Integer> treesLs = new ArrayList<Integer>();
     ArrayList<Integer> players = new ArrayList<Integer>();
     PImage treeLoc;
+    public static ArrayList<Integer> heights = new ArrayList<Integer>();
+    public static ArrayList<Integer> widths = new ArrayList<Integer>();
+    public static ArrayList<Float> terrainForExplosion = new ArrayList<Float>();
 
     public Terrain(ArrayList<PVector> points, ArrayList<Integer> trees, PImage treeLoc,ArrayList<Integer> player){
         this.terrainCoordinates = points;
@@ -33,28 +38,64 @@ public class Terrain  extends App{
                 float avgy = (y1+y2+y3+y4)/4;
    
                 avg.add(new PVector(x1, avgy));
+                
             }
             else{
                 avg.add(this.terrainCoordinates.get(i));
             }
         }
 
-        this.terrainCoordinates = avg;
+        ArrayList<Float> smoothedHeights1 = new ArrayList<>();
+        ArrayList<Float> smoothedHeights2 = new ArrayList<>();
+
+        // First pass of moving average
+        for (int x = 0; x < heights.size(); x++) {
+        float sum = 0;
+        int count = 0;
+        for (int i = x; i < x + 32 && i < heights.size(); i++) {
+            sum += heights.get(i);
+            count++;
+        }
+        smoothedHeights1.add(sum / count);
+        }
+
+        // Second pass of moving average
+        for (int x = 0; x < smoothedHeights1.size(); x++) {
+        float sum2 = 0;
+        int count2 = 0;
+        for (int i = x; i < x + 32 && i < smoothedHeights1.size(); i++) {
+            sum2 += smoothedHeights1.get(i);
+            count2++;
+        }
+            smoothedHeights2.add(sum2 / count2);
+        }
+
+        terrainForExplosion = smoothedHeights2;
+        
+        for (int i = 0; i < terrainForExplosion.size(); i++){
+            widths.add(i);
+        }
 
     }
 
     public void draw(PApplet app){
-        app.vertex(0, app.height);
-        for (PVector coord : this.terrainCoordinates) {
-            app.vertex(coord.x * CELLSIZE, coord.y * CELLSIZE);
-          }
-        app.vertex(app.width, app.height);
+        for (int x =0; x < terrainForExplosion.size(); x++){
+            app.rect(widths.get(x), terrainForExplosion.get(x), 1, HEIGHT - terrainForExplosion.get(x));
+        }
     }
 
-    public PVector[] getPlayerCoords(){
-        PVector [] result = new PVector[this.players.size()];
+    public int[] getPlayerCoordsX(){
+        int[] result = new int[this.players.size()];
         for (int i = 0; i < this.players.size(); i++){
-            result[i] = new PVector(this.terrainCoordinates.get(this.players.get(i) - 3).x - 0.3f, this.terrainCoordinates.get(this.players.get(i) - 3).y - 0.3f);
+            result[i] = widths.get(this.players.get(i));
+        }
+        return result;
+    }
+
+    public float[] getPlayerCoordsY(){
+        float[] result = new float[this.players.size()];
+        for (int i = 0; i < this.players.size(); i++){
+            result[i] = terrainForExplosion.get(this.players.get(i)) - 5;
         }
         return result;
     }
@@ -63,7 +104,7 @@ public class Terrain  extends App{
         if (this.treeLoc != null){
             for (int i = 0; i < this.treesLs.size(); i++){
                 int current = treesLs.get(i);
-                app.image(treeLoc, (this.terrainCoordinates.get(current).x - 0.4f)*CELLSIZE, (this.terrainCoordinates.get(current).y - 0.8f)*CELLSIZE, 30, 30);
+                app.image(treeLoc, widths.get(current - 16), terrainForExplosion.get(current) - CELLSIZE, CELLSIZE, CELLSIZE);
             }
         }
     }
