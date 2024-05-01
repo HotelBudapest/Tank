@@ -38,7 +38,6 @@ public class App extends PApplet {
     player CurrentPlayer;
     int turnManagerINT = 0;
     ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
-    HUD HUD;
     HashMap<Float, Float> explosiveCoords = new HashMap<Float, Float>();
 
     String trees;
@@ -195,9 +194,9 @@ public class App extends PApplet {
             
             terrain.smoothArray();
 
-            for (int j = 0; j < terrain.terrainCoordinates.size(); j++){
+            /*for (int j = 0; j < terrain.terrainCoordinates.size(); j++){
                 explosiveCoords.put(terrain.terrainCoordinates.get(j).x*CELLSIZE, terrain.terrainCoordinates.get(j).y*CELLSIZE);
-            }
+            }*/
             
 
             int[] coordsX = terrain.getPlayerCoordsX();
@@ -229,9 +228,8 @@ public class App extends PApplet {
 
             CurrentPlayer = playingOnBoard.get(0);
 
-            //HUD = new HUD();
-
             reader.close();
+
             }
             catch(FileNotFoundException e){
                 e.printStackTrace();
@@ -253,43 +251,32 @@ public class App extends PApplet {
 	@Override
     public void keyPressed(KeyEvent event){
         if (key == ' '){
-            System.out.println("Coordinates of Turrent's open end WHILE shooting: " + CurrentPlayer.turretCoord);
-            System.out.println("ANGLE of Turrent's open end WHILE shooting: " + CurrentPlayer.turretAngle);
-            
-            Projectile proj = new Projectile(CurrentPlayer.turretCoord.x - 15, CurrentPlayer.turretCoord.y, CurrentPlayer.power, CurrentPlayer.turretAngle);
+            Projectile proj = new Projectile(CurrentPlayer.turretCoord.x - 15, CurrentPlayer.turretCoord.y, CurrentPlayer.power, CurrentPlayer.turretAngle, CurrentPlayer.color);
             projectiles.add(proj);
             turnManagerINT++;
             manageTurns(turnManagerINT);
         }
         if (key == CODED) {
             if ((keyCode == LEFT) && (CurrentPlayer.x - 2 > 2)){ // terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f
-                CurrentPlayer.move(CurrentPlayer.x - 1, Terrain.terrainForExplosion.get(CurrentPlayer.x - 1) - 1); // 
+                CurrentPlayer.move(CurrentPlayer.x - 2, Terrain.terrainForExplosion.get(CurrentPlayer.x - 2) - 2); // 
                 terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 1);
                 CurrentPlayer.draw(this);
             } 
             else if ((keyCode == RIGHT) &&(CurrentPlayer.x + 2 < WIDTH - 2)){
-                CurrentPlayer.move(CurrentPlayer.x + 1, Terrain.terrainForExplosion.get(CurrentPlayer.x + 1) - 1); // , terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f
+                CurrentPlayer.move(CurrentPlayer.x + 2, Terrain.terrainForExplosion.get(CurrentPlayer.x + 2) - 2); // , terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f
                 terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 1);
                 CurrentPlayer.draw(this);
             }
             if ((keyCode == UP) && (CurrentPlayer.turretAngle > Math.toRadians(0))){
-                System.out.println("Coordinates of Turrent's open end BEFORE changing turret angle: " + CurrentPlayer.turretCoord);
-                System.out.println("ANGLE of Turrent's open end BEFORE changing turret angle: " + CurrentPlayer.turretAngle);
-                CurrentPlayer.turretAngle -= Math.toRadians(3);
+                CurrentPlayer.turretAngle -= 0.1f;
                 float changeX = ((CurrentPlayer.x + (CurrentPlayer.x + CELLSIZE))/2) + (float)((15)*((Math.cos(CurrentPlayer.turretAngle))));
                 float changeY = CurrentPlayer.y - (float)((15)*((Math.sin(CurrentPlayer.turretAngle))));
                 CurrentPlayer.moveTurret(changeX, changeY);
-                System.out.println("ANGLE of Turrent's open end AFTER changing turret angle: " + CurrentPlayer.turretAngle);
-                System.out.println("Coordinates of Turrent's open end AFTER changing turret angle: " + CurrentPlayer.turretCoord);
             } else if ((keyCode == DOWN)  && (CurrentPlayer.turretAngle <= Math.toRadians(180))){
-                System.out.println("Coordinates of Turrent's open end BEFORE changing turret angle: " + CurrentPlayer.turretCoord);
-                System.out.println("ANGLE of Turrent's open end BEFORE changing turret angle: " + CurrentPlayer.turretAngle);
-                CurrentPlayer.turretAngle += Math.toRadians(3);
+                CurrentPlayer.turretAngle += 0.1f;
                 float changeX = ((CurrentPlayer.x + (CurrentPlayer.x + CELLSIZE))/2) + (float)((15)*((Math.cos(CurrentPlayer.turretAngle))));
                 float changeY = CurrentPlayer.y - (float)((15)*((Math.sin(CurrentPlayer.turretAngle))));
                 CurrentPlayer.moveTurret(changeX, changeY);
-                System.out.println("ANGLE of Turrent's open end AFTER changing turret angle: " + CurrentPlayer.turretAngle);
-                System.out.println("Coordinates of Turrent's open end AFTER changing turret angle: " + CurrentPlayer.turretCoord);
                 //float changeX = ((CurrentPlayer.x + (CurrentPlayer.x + 1))/2 - (2/CELLSIZE)) + (float)((0.45)*((Math.cos(CurrentPlayer.turretAngle - Math.toRadians(3)))));
                 //float changeY =  CurrentPlayer.y - (float)((0.45)*((Math.sin(CurrentPlayer.turretAngle - Math.toRadians(3)))));
                 //CurrentPlayer.moveTurret(changeX, changeY);
@@ -353,13 +340,8 @@ public class App extends PApplet {
 
         terrain.drawTrees(this);
 
-        fill(0);
-        textSize(20);
-        text("Player " + CurrentPlayer.type + "'s Turn", CELLSIZE, CELLSIZE);
-       
-        fill(0);
-        textSize(20);
-        text("Power: " + CurrentPlayer.power, CELLSIZE, 2*CELLSIZE); 
+        HUD.displayTEXTS(this);
+        HUD.displayHealthBar(this);
         
         //HUD.display(this);
 
@@ -376,16 +358,16 @@ public class App extends PApplet {
             proj.update();
             proj.display(this);
             //System.out.println(explosiveCoords.get(proj.x));
-            
-            if (proj.y >= Terrain.terrainForExplosion.get((int) proj.x)) {
-                
-                ArrayList<Float> terrainChanged = explosion.alterTerrain((int)proj.x, proj.y);
-                System.out.println(terrainChanged.size() == terrain.terrainCoordinates.size());
-                noStroke();
-                explosion.drawExplosion(this, proj.x, proj.y);
-                for (int i = 0; i < terrain.terrainCoordinates.size(); i++){
-                    terrain.terrainCoordinates.set(i, new PVector(i, terrainChanged.get(i)/CELLSIZE));
+            try{
+                if (proj.y >= Terrain.terrainForExplosion.get((int) proj.x)) {
+                    explosion.alterTerrain((int)proj.x, proj.y);
+                    noStroke();
+                    explosion.drawExplosion(this, proj.x, proj.y);
+                    explosion.checkPlayerCollisions(this, proj.x, proj.y);
+                    projectiles.remove(s);
                 }
+            }
+            catch(IndexOutOfBoundsException e){
                 projectiles.remove(s);
             }
         }

@@ -15,6 +15,7 @@ public class player extends App{
     public int health;
     public int power;
     public int score;
+    public boolean isHit;
 
     public player(int x, float y, String typ, int[] color){ //, PVector coordinateL, PVector coordinateR
         this.x = x;
@@ -28,6 +29,13 @@ public class player extends App{
     }
 
     public void draw(PApplet app){
+        if (isHit) {
+            if (this.y > Terrain.terrainForExplosion.get(this.x) - 10) {
+                isHit = false;
+            }
+            this.turretCoord.y+=2;
+            this.y += 2;
+        }
         app.noStroke();
         app.fill(this.color[0], this.color[1], this.color[2]);
         app.rect((this.x-9) + 2, (this.y), 16, 6, 10);
@@ -38,7 +46,6 @@ public class player extends App{
         //app.line(this.x, this.y, this.x, this.y - 10);
         app.line((this.x + (this.x + CELLSIZE))/2  - 15, this.y, this.turretCoord.x-15, turretCoord.y);
         app.noStroke();
-        app.text("Player" + this.type + "'s Turn", CELLSIZE, CELLSIZE);
     }
 
     public void drawLine(PApplet app){

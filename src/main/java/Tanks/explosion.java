@@ -1,7 +1,7 @@
 package Tanks;
 
 import java.util.*;
-public class explosion {
+public class explosion extends App{
     public static float terrainHeightBefore = 0.0f;
     public static float terrainHeightAfter = 0.0f;
     public static final int[] INNER = new int[] { 253, 248, 172 };
@@ -11,9 +11,9 @@ public class explosion {
     public static final int INNER_RADIUS = 10;
     public static final int MIDDLE_RADIUS = 20;
     public static final int OUTER_RADIUS = 30;
+    public static float r = 30f;
 
-    public static ArrayList<Float> alterTerrain(int xc, float yc) {
-        final float r = 30f; // Radius of the effect
+    public static ArrayList<Float> alterTerrain(int xc, float yc) { 
 
         for (int i = Math.max(0, xc - (int) r); i < Math.min(Terrain.terrainForExplosion.size(), xc + (int) r); i++) {
             // Calculate the horizontal distance from the center of the explosion
@@ -40,6 +40,20 @@ public class explosion {
         }
 
         return Terrain.terrainForExplosion;
+    }
+
+    public static void checkPlayerCollisions(App app, float xc, float yc){
+      float[] hitRadiusXLeft = {xc - r, yc - r};
+      float[] hitRadiusXRight = {xc + r, yc + r}; 
+
+      for (int i = 0; i < app.playingOnBoard.size(); i++){
+        if ((app.playingOnBoard.get(i).x >= hitRadiusXLeft[0]) && (app.playingOnBoard.get(i).x <= hitRadiusXRight[0]) && (app.playingOnBoard.get(i).y >= hitRadiusXLeft[1]) && (app.playingOnBoard.get(i).y <= hitRadiusXRight[1])){
+          app.playingOnBoard.get(i).health -= 30;
+          app.playingOnBoard.get(i).isHit = true;
+          // app.playingOnBoard.get(i).inAir(Terrain.terrainForExplosion.get(app.playingOnBoard.get(i).x));
+          app.CurrentPlayer.score += 30;
+        }
+      }
     }
 
     public static void drawExplosion(App app, float x, float y) {
