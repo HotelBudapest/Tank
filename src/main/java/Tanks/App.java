@@ -1,6 +1,5 @@
 package Tanks;
 
-import org.checkerframework.checker.units.qual.A;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -9,19 +8,15 @@ import processing.data.JSONObject;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-
 import java.io.*;
 import java.util.*;
-import java.util.List;
 
 public class App extends PApplet {
 
     public static final int CELLSIZE = 32; //8;
     public static final int CELLHEIGHT = 32;
 
+    int UniversalIndex = 0;
     public static final int CELLAVG = 32;
     public static final int TOPBAR = 0;
     public static int WIDTH = 864; //CELLSIZE*BOARD_WIDTH;
@@ -38,10 +33,16 @@ public class App extends PApplet {
     player CurrentPlayer;
     int turnManagerINT = 0;
     ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
-    HashMap<Float, Float> explosiveCoords = new HashMap<Float, Float>();
+    public int Wind = random.nextInt(71) - 35;
 
     String trees;
     public PImage treepic;
+    public PImage fuelIMG;
+    public PImage Wind1;
+    public PImage Wind2;
+    player previousPlayer;
+
+    public static PImage parachuteIMG;
     int R;
     int G;
     int B;
@@ -80,7 +81,7 @@ public class App extends PApplet {
         JSONObject json = loadJSONObject(configPath);
 
         JSONArray level = json.getJSONArray("levels");
-        JSONObject current = level.getJSONObject( 0);
+        JSONObject current = level.getJSONObject( UniversalIndex);
         layout = current.getString("layout");
         backgroundImage = current.getString("background");
         String[] foregroundColour = current.getString("foreground-colour").split(",");
@@ -109,6 +110,11 @@ public class App extends PApplet {
         else{
             trees = null;
         }
+
+        parachuteIMG  = loadImage("src/main/resources/Tanks/parachute.png");
+        fuelIMG = loadImage("src/main/resources/Tanks/fuel.png");
+        Wind1 = loadImage("src/main/resources/Tanks/wind.png");
+        Wind2 = loadImage("src/main/resources/Tanks/wind-1.png");
 
         try{ 
 			BufferedReader reader = new BufferedReader(new FileReader(layout));
@@ -252,7 +258,15 @@ public class App extends PApplet {
     public void keyPressed(KeyEvent event){
         if (key == ' '){
             Projectile proj = new Projectile(CurrentPlayer.turretCoord.x - 15, CurrentPlayer.turretCoord.y, CurrentPlayer.power, CurrentPlayer.turretAngle, CurrentPlayer.color);
+            Wind += proj.getWind();
+            if (Wind > 35){
+                Wind = 35;
+            }
+            else if (Wind < -35){
+                Wind = -35;
+            }
             projectiles.add(proj);
+            previousPlayer = CurrentPlayer;
             turnManagerINT++;
             manageTurns(turnManagerINT);
         }
@@ -342,6 +356,7 @@ public class App extends PApplet {
 
         HUD.displayTEXTS(this);
         HUD.displayHealthBar(this);
+        HUD.displayScoreBoard(this);
         
         //HUD.display(this);
 
@@ -360,10 +375,10 @@ public class App extends PApplet {
             //System.out.println(explosiveCoords.get(proj.x));
             try{
                 if (proj.y >= Terrain.terrainForExplosion.get((int) proj.x)) {
-                    explosion.alterTerrain((int)proj.x, proj.y);
+                    explosion.alterTerrain(this, (int)proj.x, proj.y);
                     noStroke();
                     explosion.drawExplosion(this, proj.x, proj.y);
-                    explosion.checkPlayerCollisions(this, proj.x, proj.y);
+                    explosion.checkPlayerCollisions(this, proj.x, proj.y, previousPlayer);
                     projectiles.remove(s);
                 }
             }
@@ -371,6 +386,14 @@ public class App extends PApplet {
                 projectiles.remove(s);
             }
         }
+    }
+
+    public void displayEndGame(){
+        background(255);
+        fill(0);
+        textSize(16);
+        text("GAME OVER", WIDTH/2, HEIGHT/2);
+        noLoop();
     }
 
 

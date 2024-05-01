@@ -1,9 +1,6 @@
 package Tanks;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -26,24 +23,24 @@ public class Terrain  extends App{
     }
 
     public void smoothArray(){
-        ArrayList<PVector> avg = new ArrayList<PVector>();
-        for (int i = 0; i < this.terrainCoordinates.size(); i++){
-            if ((i < this.terrainCoordinates.size() - 4)){
-                float x1 = this.terrainCoordinates.get(i).x;
-                
-                float y1 = this.terrainCoordinates.get(i).y;
-                float y2 = this.terrainCoordinates.get(i+1).y;
-                float y3 = this.terrainCoordinates.get(i+3).y;
-                float y4 = this.terrainCoordinates.get(i+4).y;
-                float avgy = (y1+y2+y3+y4)/4;
-   
-                avg.add(new PVector(x1, avgy));
-                
-            }
-            else{
-                avg.add(this.terrainCoordinates.get(i));
-            }
-        }
+            // ArrayList<PVector> avg = new ArrayList<PVector>();
+            // for (int i = 0; i < this.terrainCoordinates.size(); i++){
+            //     if ((i < this.terrainCoordinates.size() - 4)){
+            //         float x1 = this.terrainCoordinates.get(i).x;
+                    
+            //         float y1 = this.terrainCoordinates.get(i).y;
+            //         float y2 = this.terrainCoordinates.get(i+1).y;
+            //         float y3 = this.terrainCoordinates.get(i+3).y;
+            //         float y4 = this.terrainCoordinates.get(i+4).y;
+            //         float avgy = (y1+y2+y3+y4)/4;
+    
+            //         avg.add(new PVector(x1, avgy));
+                    
+            //     }
+            //     else{
+            //         avg.add(this.terrainCoordinates.get(i));
+            //     }
+            // }
 
         ArrayList<Float> smoothedHeights1 = new ArrayList<>();
         ArrayList<Float> smoothedHeights2 = new ArrayList<>();
@@ -104,7 +101,7 @@ public class Terrain  extends App{
         if (this.treeLoc != null){
             for (int i = 0; i < this.treesLs.size(); i++){
                 int current = treesLs.get(i);
-                app.image(treeLoc, widths.get(current - 16), terrainForExplosion.get(current) - CELLSIZE, CELLSIZE, CELLSIZE);
+                app.image(treeLoc, widths.get(current)-16, terrainForExplosion.get(current)-30, CELLSIZE, CELLSIZE);
             }
         }
     }

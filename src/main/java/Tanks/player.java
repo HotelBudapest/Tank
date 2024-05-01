@@ -1,6 +1,4 @@
 package Tanks;
-import java.util.*;
-import Tanks.App;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -15,7 +13,10 @@ public class player extends App{
     public int health;
     public int power;
     public int score;
+    public int parachutesLeft= 3;
+    public boolean parachute_used = false;
     public boolean isHit;
+    public int fuel;
 
     public player(int x, float y, String typ, int[] color){ //, PVector coordinateL, PVector coordinateR
         this.x = x;
@@ -26,15 +27,29 @@ public class player extends App{
         this.health = 100;
         this.score = 0;
         this.power = 0;
+        this.fuel = 250;
     }
 
     public void draw(PApplet app){
         if (isHit) {
             if (this.y > Terrain.terrainForExplosion.get(this.x) - 10) {
                 isHit = false;
+                if(this.parachute_used){
+                    this.parachutesLeft--;
+                    this.parachute_used = false;
+                }
             }
-            this.turretCoord.y+=2;
-            this.y += 2;
+            if (this.parachutesLeft > 0){
+                app.image(parachuteIMG, (float)this.x - 14, this.y-CELLSIZE, CELLSIZE, CELLSIZE);
+                this.turretCoord.y+=0.5;
+                this.y += 0.5;
+                this.parachute_used = true;
+            }
+            else{
+                this.turretCoord.y += 2;
+                this.y += 2;
+                this.health -= 1;
+            }
         }
         app.noStroke();
         app.fill(this.color[0], this.color[1], this.color[2]);
@@ -49,7 +64,6 @@ public class player extends App{
     }
 
     public void drawLine(PApplet app){
-        
         app.stroke(0);
         app.strokeWeight(2);
 
@@ -67,11 +81,14 @@ public class player extends App{
         if (direction == 'L') {
             changedX = -1;
         }*/
-        int changeForTurretX = this.x - changedX;
-        float changeForTurretY = this.y - changedY;
-        this.x = changedX;
-        this.y = changedY;
-        this.turretCoord = new PVector(this.turretCoord.x - changeForTurretX, this.turretCoord.y - changeForTurretY);
+        if (fuel>0){
+            int changeForTurretX = this.x - changedX;
+            float changeForTurretY = this.y - changedY;
+            this.x = changedX;
+            this.y = changedY;
+            this.turretCoord = new PVector(this.turretCoord.x - changeForTurretX, this.turretCoord.y - changeForTurretY);
+            fuel--;
+        }
     }
 
     public void moveTurret(float changedX, float changedY){

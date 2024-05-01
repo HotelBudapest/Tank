@@ -1,6 +1,8 @@
 package Tanks;
 
 import java.util.*;
+
+import processing.core.PApplet;
 public class explosion extends App{
     public static float terrainHeightBefore = 0.0f;
     public static float terrainHeightAfter = 0.0f;
@@ -13,7 +15,7 @@ public class explosion extends App{
     public static final int OUTER_RADIUS = 30;
     public static float r = 30f;
 
-    public static ArrayList<Float> alterTerrain(int xc, float yc) { 
+    public static void alterTerrain(App app, int xc, float yc) { 
 
         for (int i = Math.max(0, xc - (int) r); i < Math.min(Terrain.terrainForExplosion.size(), xc + (int) r); i++) {
             // Calculate the horizontal distance from the center of the explosion
@@ -39,16 +41,24 @@ public class explosion extends App{
             }
         }
 
-        return Terrain.terrainForExplosion;
+        app.CurrentPlayer.draw(app);
     }
 
-    public static void checkPlayerCollisions(App app, float xc, float yc){
+    public static void checkPlayerCollisions(App app, float xc, float yc, player playerShot){
       float[] hitRadiusXLeft = {xc - r, yc - r};
       float[] hitRadiusXRight = {xc + r, yc + r}; 
 
       for (int i = 0; i < app.playingOnBoard.size(); i++){
         if ((app.playingOnBoard.get(i).x >= hitRadiusXLeft[0]) && (app.playingOnBoard.get(i).x <= hitRadiusXRight[0]) && (app.playingOnBoard.get(i).y >= hitRadiusXLeft[1]) && (app.playingOnBoard.get(i).y <= hitRadiusXRight[1])){
           app.playingOnBoard.get(i).health -= 30;
+          playerShot.score += 30;
+          if (app.playingOnBoard.get(i).health <= 0){
+            drawExplosion(app, app.playingOnBoard.get(i).x, app.playingOnBoard.get(i).y);
+            app.playingOnBoard.remove(app.playingOnBoard.get(i));
+            if (app.playingOnBoard.isEmpty()){
+                app.displayEndGame();
+            }
+          }
           app.playingOnBoard.get(i).isHit = true;
           // app.playingOnBoard.get(i).inAir(Terrain.terrainForExplosion.get(app.playingOnBoard.get(i).x));
           app.CurrentPlayer.score += 30;

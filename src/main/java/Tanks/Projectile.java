@@ -1,7 +1,7 @@
 package Tanks;
 
+import java.util.Random;
 import processing.core.PApplet;
-import processing.core.PVector;
 public class Projectile extends App{
     float x;
     float y;
@@ -22,16 +22,26 @@ public class Projectile extends App{
     }
 
     public void update() {
-        this.x += (velocity) * Math.cos(this.angle); // + wind
+        this.x += (velocity) * Math.cos(this.angle) + (Wind*0.03); // + wind
         addedGravity = addedGravity + velocity * (gravity / FPS);
 
         this.y += addedGravity;
         this.y -= (velocity) * Math.sin(this.angle);
+    }
 
+    public int getWind(){
+        int change = (random.nextInt(11)-5);
+        if ((Wind + change > 35) || (Wind + change < -35)){
+            return 0;
+        }
+        else{
+            return change;
+        }
     }
 
     public void display(PApplet app) {
         update();
+        app.noStroke();
         app.fill(this.color[0], this.color[1], this.color[2]); 
         app.ellipse(this.x, this.y, 10, 10);
     }
