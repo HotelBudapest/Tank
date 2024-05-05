@@ -16,26 +16,25 @@ public class explosion extends App{
     public static float r = 30f;
 
     public static void alterTerrain(App app, Projectile proj) { 
+      for (int i = Math.max(0, (int)proj.x - (int) r); i < Math.min(Terrain.terrainForExplosion.size(), (int)proj.x + (int) r); i++) {
+          
+          float d = Math.abs(i - proj.x);
+          
+          float semiCircleHeight = (float) Math.sqrt(Math.max(0, r * r - d * d));
+          if (Terrain.terrainForExplosion.get(i)< proj.y + semiCircleHeight && Terrain.terrainForExplosion.get(i) > proj.y - semiCircleHeight) {
+              
+              terrainHeightBefore = Terrain.terrainForExplosion.get(i);
+              Terrain.terrainForExplosion.set(i,proj.y + semiCircleHeight);
+              terrainHeightAfter = Terrain.terrainForExplosion.get(i);
+          } else if (Terrain.terrainForExplosion.get(i) < proj.y - semiCircleHeight) {
 
-        for (int i = Math.max(0, (int)proj.x - (int) r); i < Math.min(Terrain.terrainForExplosion.size(), (int)proj.x + (int) r); i++) {
-            
-            float d = Math.abs(i - proj.x);
-            float semiCircleHeight = (float) Math.sqrt(Math.max(0, r * r - d * d));
-            if (Terrain.terrainForExplosion.get(i)< proj.y + semiCircleHeight && Terrain.terrainForExplosion.get(i) > proj.y - semiCircleHeight) {
-                // Lower the terrain to proj.y + the semicircle height to create a crater
-                terrainHeightBefore = Terrain.terrainForExplosion.get(i);
-                Terrain.terrainForExplosion.set(i,proj.y + semiCircleHeight);
-                terrainHeightAfter = Terrain.terrainForExplosion.get(i);
-            } else if (Terrain.terrainForExplosion.get(i) < proj.y - semiCircleHeight) {
-
-                terrainHeightBefore = Terrain.terrainForExplosion.get(i);
-                Terrain.terrainForExplosion.set(i, Terrain.terrainForExplosion.get(i) + 2 * semiCircleHeight);
-                Terrain.terrainForExplosion.set(i, Math.min(Terrain.terrainForExplosion.get(i), proj.y + semiCircleHeight));
-                terrainHeightAfter = Terrain.terrainForExplosion.get(i);
-            }
-        }
-
-        app.CurrentPlayer.draw(app);
+              terrainHeightBefore = Terrain.terrainForExplosion.get(i);
+              Terrain.terrainForExplosion.set(i, Terrain.terrainForExplosion.get(i) + 2 * semiCircleHeight);
+              Terrain.terrainForExplosion.set(i, Math.min(Terrain.terrainForExplosion.get(i), proj.y + semiCircleHeight));
+              terrainHeightAfter = Terrain.terrainForExplosion.get(i);
+          }
+      }
+      app.CurrentPlayer.draw(app);
     }
 
     public static void checkPlayerCollisions(App app, Projectile proj){
@@ -48,10 +47,8 @@ public class explosion extends App{
           proj.updatePlayerScore();
           if (app.playingOnBoard.get(i).health <= 0){
             drawExplosion(app, app.playingOnBoard.get(i).x, app.playingOnBoard.get(i).y);
+            pastPlayerScores.put(app.playingOnBoard.get(i).type, app.playingOnBoard.get(i).score);
             app.playingOnBoard.remove(app.playingOnBoard.get(i));
-            if (app.playingOnBoard.isEmpty()){
-                app.displayEndGame();
-            }
           }
           app.playingOnBoard.get(i).isHit = true;
         }

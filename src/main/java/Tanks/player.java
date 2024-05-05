@@ -17,6 +17,7 @@ public class player extends App{
     public boolean parachute_used = false;
     public boolean isHit;
     public int fuel;
+    public boolean noTerrainBelow;
 
     public player(int x, float y, String typ, int[] color){ //, PVector coordinateL, PVector coordinateR
         this.x = x;
@@ -31,26 +32,30 @@ public class player extends App{
     }
 
     public void draw(PApplet app){
-            if (isHit) {
-                if (this.y > Terrain.terrainForExplosion.get(this.x) - 10) {
-                    isHit = false;
-                    if(this.parachute_used){
-                        this.parachutesLeft--;
-                        this.parachute_used = false;
-                    }
-                }
-                if (this.parachutesLeft > 0){
-                    app.image(parachuteIMG, (float)this.x - 14, this.y-CELLSIZE, CELLSIZE, CELLSIZE);
-                    this.turretCoord.y+=0.5;
-                    this.y += 0.5;
-                    this.parachute_used = true;
-                }
-                else{
-                    this.turretCoord.y += 2;
-                    this.y += 2;
-                    this.health -= 1;
+        if (noTerrainBelow){
+            this.turretCoord.y+=0.5;
+            this.y += 0.5;
+        }
+        if (isHit) {
+            if (this.y > Terrain.terrainForExplosion.get(this.x) - 10) {
+                isHit = false;
+                if(this.parachute_used){
+                    this.parachutesLeft--;
+                    this.parachute_used = false;
                 }
             }
+            if (this.parachutesLeft > 0){
+                app.image(parachuteIMG, (float)this.x - 14, this.y-CELLSIZE, CELLSIZE, CELLSIZE);
+                this.turretCoord.y+=0.5;
+                this.y += 0.5;
+                this.parachute_used = true;
+            }
+            else{
+                this.turretCoord.y += 2;
+                this.y += 2;
+                this.health -= 1;
+            }
+        }
         app.noStroke();
         app.fill(this.color[0], this.color[1], this.color[2]);
         app.rect((this.x-9) + 2, (this.y), 16, 6, 10);

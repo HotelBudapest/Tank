@@ -36,7 +36,7 @@ public class App extends PApplet {
     player CurrentPlayer;
 
     
-    public static ArrayList<Integer> pastPlayerScores = new ArrayList<Integer>();
+    public static HashMap<String, Integer> pastPlayerScores = new HashMap<String, Integer>();
 
     int turnManagerINT = 0;
     int stageManagerINT = 0;
@@ -256,9 +256,8 @@ public class App extends PApplet {
     }
 
     public void restartGame(){
-        pastPlayerScores = new ArrayList<Integer>();
         for (int i = 0; i < playingOnBoard.size(); i++){
-            pastPlayerScores.add(playingOnBoard.get(i).score);
+            pastPlayerScores.put(playingOnBoard.get(i).type, playingOnBoard.get(i).score);
         }
         System.out.println(pastPlayerScores.toString());
         noLoop();
@@ -270,7 +269,7 @@ public class App extends PApplet {
         playingOnBoard = new ArrayList<player>();
         setup();
         for (int i = 0; i < playingOnBoard.size(); i++){
-            playingOnBoard.get(i).score = pastPlayerScores.get(i);
+            playingOnBoard.get(i).score = pastPlayerScores.get(playingOnBoard.get(i).type);
         }
         loop();
     }
@@ -377,7 +376,7 @@ public class App extends PApplet {
         //TODO: Check user action
 
         //background(255);
-        image(loadImage(backgroundImage), 0, 0, width, height);
+        image(loadImage(backgroundImage), 0, 0, WIDTH, HEIGHT);
 
         fill(R, G, B);
         terrain.draw(this);
@@ -389,6 +388,10 @@ public class App extends PApplet {
         HUD.displayScoreBoard(this);
         
         //HUD.display(this);
+
+        if (playingOnBoard.size() == 1){
+            restartGame();
+        }
 
         for (int i =0; i < playingOnBoard.size(); i++){
             player current = playingOnBoard.get(i);
