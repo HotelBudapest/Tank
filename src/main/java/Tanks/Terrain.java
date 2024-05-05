@@ -15,8 +15,7 @@ public class Terrain  extends App{
     public static ArrayList<Integer> widths = new ArrayList<Integer>();
     public static ArrayList<Float> terrainForExplosion = new ArrayList<Float>();
 
-    public Terrain(ArrayList<PVector> points, ArrayList<Integer> trees, PImage treeLoc,ArrayList<Integer> player){
-        this.terrainCoordinates = points;
+    public Terrain(ArrayList<Integer> trees, PImage treeLoc,ArrayList<Integer> player){
         this.treesLs = trees;
         this.treeLoc = treeLoc;
         this.players = player;

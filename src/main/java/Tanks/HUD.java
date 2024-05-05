@@ -70,6 +70,7 @@ public class HUD extends App{
     }
 
     public static void displayScoreBoard(App app){
+        app.pushStyle();
         app.stroke(0);
         app.fill(0, 0, 0, 0);
         app.rect(WIDTH - 6*CELLSIZE, 3*CELLSIZE,  180, 35);
@@ -90,7 +91,7 @@ public class HUD extends App{
             app.text(current.score, WIDTH - 2*CELLSIZE + 15, 4*CELLSIZE + j); 
             j+=25;
         }
-        
+        app.popStyle();
     }
 
 }

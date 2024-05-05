@@ -11,12 +11,13 @@ import processing.event.MouseEvent;
 import java.io.*;
 import java.util.*;
 
+import jogamp.graph.curve.tess.Loop;
+
 public class App extends PApplet {
 
     public static final int CELLSIZE = 32; //8;
     public static final int CELLHEIGHT = 32;
 
-    int UniversalIndex = 0;
     public static final int CELLAVG = 32;
     public static final int TOPBAR = 0;
     public static int WIDTH = 864; //CELLSIZE*BOARD_WIDTH;
@@ -25,13 +26,21 @@ public class App extends PApplet {
     public static final int BOARD_HEIGHT = 20;
     public int[][] board = new int[32][32];
     ArrayList<Integer> treesLs = new ArrayList<Integer>();
+
     public Terrain terrain;
-    ArrayList<PVector> test = new ArrayList<PVector>();
+
+    //ArrayList<PVector> test = new ArrayList<PVector>();
     HashMap<String, Integer> playerLs = new HashMap<String, Integer>();
     ArrayList<player> playingOnBoard = new ArrayList<player>();
     public HashMap<String ,int[]> playerColorValues = new HashMap<String ,int[]>();
     player CurrentPlayer;
+
+    
+    public static ArrayList<Integer> pastPlayerScores = new ArrayList<Integer>();
+
     int turnManagerINT = 0;
+    int stageManagerINT = 0;
+
     ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
     public int Wind = random.nextInt(71) - 35;
 
@@ -81,7 +90,7 @@ public class App extends PApplet {
         JSONObject json = loadJSONObject(configPath);
 
         JSONArray level = json.getJSONArray("levels");
-        JSONObject current = level.getJSONObject( UniversalIndex);
+        JSONObject current = level.getJSONObject( stageManagerINT);
         layout = current.getString("layout");
         backgroundImage = current.getString("background");
         String[] foregroundColour = current.getString("foreground-colour").split(",");
@@ -196,7 +205,7 @@ public class App extends PApplet {
                 }
             }
 
-            terrain = new Terrain(test, treesLs, treepic, sortedplayer);
+            terrain = new Terrain(treesLs, treepic, sortedplayer);
             
             terrain.smoothArray();
 
@@ -243,8 +252,27 @@ public class App extends PApplet {
             catch(IOException e){
                 e.printStackTrace();
             }
-        
 
+    }
+
+    public void restartGame(){
+        pastPlayerScores = new ArrayList<Integer>();
+        for (int i = 0; i < playingOnBoard.size(); i++){
+            pastPlayerScores.add(playingOnBoard.get(i).score);
+        }
+        System.out.println(pastPlayerScores.toString());
+        noLoop();
+        stageManagerINT = (stageManagerINT + 1)%3;
+        turnManagerINT = 0;
+        board = new int[32][32];
+        treesLs = new ArrayList<Integer>();
+        Terrain.heights = new ArrayList<Integer>();
+        playingOnBoard = new ArrayList<player>();
+        setup();
+        for (int i = 0; i < playingOnBoard.size(); i++){
+            playingOnBoard.get(i).score = pastPlayerScores.get(i);
+        }
+        loop();
     }
 
     public void manageTurns(int n){
@@ -257,27 +285,26 @@ public class App extends PApplet {
 	@Override
     public void keyPressed(KeyEvent event){
         if (key == ' '){
-            Projectile proj = new Projectile(CurrentPlayer.turretCoord.x - 15, CurrentPlayer.turretCoord.y, CurrentPlayer.power, CurrentPlayer.turretAngle, CurrentPlayer.color);
-            Wind += proj.getWind();
+            Projectile projToBeAdded = new Projectile(CurrentPlayer.turretCoord.x - 15, CurrentPlayer.turretCoord.y, CurrentPlayer.power, CurrentPlayer.turretAngle, CurrentPlayer.color, CurrentPlayer);
+            Wind += projToBeAdded.getWind();
             if (Wind > 35){
                 Wind = 35;
             }
             else if (Wind < -35){
                 Wind = -35;
             }
-            projectiles.add(proj);
-            previousPlayer = CurrentPlayer;
+            projectiles.add(projToBeAdded);
             turnManagerINT++;
             manageTurns(turnManagerINT);
         }
         if (key == CODED) {
-            if ((keyCode == LEFT) && (CurrentPlayer.x - 2 > 2)){ // terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f
-                CurrentPlayer.move(CurrentPlayer.x - 2, Terrain.terrainForExplosion.get(CurrentPlayer.x - 2) - 2); // 
+            if ((keyCode == LEFT) && (CurrentPlayer.x - 3 > 3)){ // terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f
+                CurrentPlayer.move(CurrentPlayer.x - 3, Terrain.terrainForExplosion.get(CurrentPlayer.x - 3) - 3); // 
                 terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 1);
                 CurrentPlayer.draw(this);
             } 
-            else if ((keyCode == RIGHT) &&(CurrentPlayer.x + 2 < WIDTH - 2)){
-                CurrentPlayer.move(CurrentPlayer.x + 2, Terrain.terrainForExplosion.get(CurrentPlayer.x + 2) - 2); // , terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f
+            else if ((keyCode == RIGHT) &&(CurrentPlayer.x + 3 < WIDTH - 3)){
+                CurrentPlayer.move(CurrentPlayer.x + 3, Terrain.terrainForExplosion.get(CurrentPlayer.x + 3) - 3); // , terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f
                 terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 1);
                 CurrentPlayer.draw(this);
             }
@@ -301,6 +328,9 @@ public class App extends PApplet {
         }
         if (key == 'S' || key == 's') {
             CurrentPlayer.power -= 36/FPS;
+        }
+        if (key == 'R' || key == 'r') {
+            restartGame();
         }
     }
 
@@ -372,13 +402,14 @@ public class App extends PApplet {
             Projectile proj = projectiles.get(s);
             proj.update();
             proj.display(this);
+            //System.out.println("Projectile of: " + proj.PlayerThatFired.type);
             //System.out.println(explosiveCoords.get(proj.x));
             try{
                 if (proj.y >= Terrain.terrainForExplosion.get((int) proj.x)) {
-                    explosion.alterTerrain(this, (int)proj.x, proj.y);
+                    explosion.alterTerrain(this, proj);
                     noStroke();
                     explosion.drawExplosion(this, proj.x, proj.y);
-                    explosion.checkPlayerCollisions(this, proj.x, proj.y, previousPlayer);
+                    explosion.checkPlayerCollisions(this, proj);
                     projectiles.remove(s);
                 }
             }
