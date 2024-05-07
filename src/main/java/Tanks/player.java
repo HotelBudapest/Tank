@@ -27,15 +27,18 @@ public class player extends App{
         this.color = color;
         this.health = 100;
         this.score = 0;
-        this.power = 0;
+        this.power = 50;
         this.fuel = 250;
     }
 
     public void draw(PApplet app){
-        if (noTerrainBelow){
-            this.turretCoord.y+=0.5;
-            this.y += 0.5;
-        }
+        // if (noTerrainBelow){
+        //     if (this.y ==  Terrain.terrainForExplosion.get(this.x)){
+        //         noTerrainBelow = false;
+        //     }
+        //     this.turretCoord.y+=0.5;
+        //     this.y += 0.5;
+        // }
         if (isHit) {
             if (this.y > Terrain.terrainForExplosion.get(this.x) - 10) {
                 isHit = false;

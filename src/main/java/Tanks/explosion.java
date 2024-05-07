@@ -16,6 +16,14 @@ public class explosion extends App{
     public static float r = 30f;
 
     public static void alterTerrain(App app, Projectile proj) { 
+
+      // float[] previousHeights = new float[app.playingOnBoard.size()];
+      // for (int s = 0; s < app.playingOnBoard.size(); s++){
+      //   previousHeights[s] = Terrain.terrainForExplosion.get(app.playingOnBoard.get(s).x);
+      //   System.out.println("previous height of " +  app.playingOnBoard.get(s).type + " " + previousHeights[s]);
+      // }
+
+
       for (int i = Math.max(0, (int)proj.x - (int) r); i < Math.min(Terrain.terrainForExplosion.size(), (int)proj.x + (int) r); i++) {
           
           float d = Math.abs(i - proj.x);
@@ -34,7 +42,18 @@ public class explosion extends App{
               terrainHeightAfter = Terrain.terrainForExplosion.get(i);
           }
       }
-      app.CurrentPlayer.draw(app);
+
+      // for (int k = 0; k < app.playingOnBoard.size();k++){
+      //   float prev = previousHeights[k];
+      //   System.out.println("Later height of " +  app.playingOnBoard.get(k).type + " " + Terrain.terrainForExplosion.get(app.playingOnBoard.get(k).x));
+      //   while(prev != Terrain.terrainForExplosion.get(app.playingOnBoard.get(k).x)){
+      //     app.playingOnBoard.get(k).y += 0.2f;
+      //     prev += 0.2f;
+      //   }
+      //   //app.playingOnBoard.get(k).noTerrainBelow = false;
+      //   //app.playingOnBoard.get(i).y = Terrain.terrainForExplosion.get(app.playingOnBoard.get(i).x);
+      // }
+      // app.CurrentPlayer.draw(app);
     }
 
     public static void checkPlayerCollisions(App app, Projectile proj){
@@ -42,8 +61,10 @@ public class explosion extends App{
       float[] hitRadiusXRight = {proj.x + r, proj.y + r}; 
 
       for (int i = 0; i < app.playingOnBoard.size(); i++){
-        if ((app.playingOnBoard.get(i).x >= hitRadiusXLeft[0]) && (app.playingOnBoard.get(i).x <= hitRadiusXRight[0]) && (app.playingOnBoard.get(i).y >= hitRadiusXLeft[1]) && (app.playingOnBoard.get(i).y <= hitRadiusXRight[1])){
-          app.playingOnBoard.get(i).health -= 30;
+        if ((app.playingOnBoard.get(i).x >= hitRadiusXLeft[0]) && (app.playingOnBoard.get(i).x <= hitRadiusXRight[0])){ //  && (app.playingOnBoard.get(i).y >= hitRadiusXLeft[1]) && (app.playingOnBoard.get(i).y <= hitRadiusXRight[1])
+          if ((app.playingOnBoard.get(i).y >= hitRadiusXLeft[1]) && (app.playingOnBoard.get(i).y <= hitRadiusXRight[1])){
+            app.playingOnBoard.get(i).health -= 30;
+          }
           proj.updatePlayerScore();
           if (app.playingOnBoard.get(i).health <= 0){
             drawExplosion(app, app.playingOnBoard.get(i).x, app.playingOnBoard.get(i).y);
