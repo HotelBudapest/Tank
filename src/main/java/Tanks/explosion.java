@@ -63,9 +63,14 @@ public class explosion extends App{
       for (int i = 0; i < app.playingOnBoard.size(); i++){
         if ((app.playingOnBoard.get(i).x >= hitRadiusXLeft[0]) && (app.playingOnBoard.get(i).x <= hitRadiusXRight[0])){ //  && (app.playingOnBoard.get(i).y >= hitRadiusXLeft[1]) && (app.playingOnBoard.get(i).y <= hitRadiusXRight[1])
           if ((app.playingOnBoard.get(i).y >= hitRadiusXLeft[1]) && (app.playingOnBoard.get(i).y <= hitRadiusXRight[1])){
-            app.playingOnBoard.get(i).health -= 30;
+            if ((app.playingOnBoard.get(i).shield == 0)){
+              app.playingOnBoard.get(i).health -= 30;
+              proj.updatePlayerScore();
+            }
+            else{
+              app.playingOnBoard.get(i).shield--;
+            }
           }
-          proj.updatePlayerScore();
           if (app.playingOnBoard.get(i).health <= 0){
             drawExplosion(app, app.playingOnBoard.get(i).x, app.playingOnBoard.get(i).y);
             pastPlayerScores.put(app.playingOnBoard.get(i).type, app.playingOnBoard.get(i).score);

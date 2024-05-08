@@ -11,14 +11,15 @@ public class Terrain  extends App{
     ArrayList<Integer> treesLs = new ArrayList<Integer>();
     ArrayList<Integer> players = new ArrayList<Integer>();
     PImage treeLoc;
-    public static ArrayList<Integer> heights = new ArrayList<Integer>();
-    public static ArrayList<Integer> widths = new ArrayList<Integer>();
+    ArrayList<Integer> heights = new ArrayList<Integer>();
+    public ArrayList<Integer> widths = new ArrayList<Integer>();
     public static ArrayList<Float> terrainForExplosion = new ArrayList<Float>();
 
-    public Terrain(ArrayList<Integer> trees, PImage treeLoc,ArrayList<Integer> player){
+    public Terrain(ArrayList<Integer> trees, PImage treeLoc,ArrayList<Integer> player, ArrayList<Integer> heights){
         this.treesLs = trees;
         this.treeLoc = treeLoc;
         this.players = player;
+        this.heights = heights;
     }
 
     public void smoothArray(){
@@ -41,49 +42,48 @@ public class Terrain  extends App{
             //     }
             // }
 
-        ArrayList<Float> smoothedHeights1 = new ArrayList<>();
-        ArrayList<Float> smoothedHeights2 = new ArrayList<>();
+        ArrayList<Float> smoothedHeights1 = new ArrayList<Float>();
+        ArrayList<Float> smoothedHeights2 = new ArrayList<Float>();
 
-        // First pass of moving average
-        for (int x = 0; x < heights.size(); x++) {
-        float sum = 0;
-        int count = 0;
-        for (int i = x; i < x + 32 && i < heights.size(); i++) {
-            sum += heights.get(i);
-            count++;
-        }
+        for (int x = 0; x < this.heights.size(); x++) {
+            float sum = 0;
+            int count = 0;
+            for (int i = x; i < x + 32 && i < this.heights.size(); i++) {
+                sum += this.heights.get(i);
+                count++;
+            }
         smoothedHeights1.add(sum / count);
         }
 
-        // Second pass of moving average
         for (int x = 0; x < smoothedHeights1.size(); x++) {
-        float sum2 = 0;
-        int count2 = 0;
-        for (int i = x; i < x + 32 && i < smoothedHeights1.size(); i++) {
-            sum2 += smoothedHeights1.get(i);
-            count2++;
-        }
-            smoothedHeights2.add(sum2 / count2);
+            float sum2 = 0;
+            int count2 = 0;
+            for (int i = x; i < x + 32 && i < smoothedHeights1.size(); i++) {
+                sum2 += smoothedHeights1.get(i);
+                count2++;
+            }
+                smoothedHeights2.add(sum2 / count2);
         }
 
         terrainForExplosion = smoothedHeights2;
         
         for (int i = 0; i < terrainForExplosion.size(); i++){
-            widths.add(i);
+            this.widths.add(i);
         }
 
     }
 
     public void draw(PApplet app){
         for (int x =0; x < terrainForExplosion.size(); x++){
-            app.rect(widths.get(x), terrainForExplosion.get(x), 1, HEIGHT - terrainForExplosion.get(x));
+            app.rect(this.widths.get(x), terrainForExplosion.get(x), 1,app.height - terrainForExplosion.get(x));
         }
     }
 
     public int[] getPlayerCoordsX(){
         int[] result = new int[this.players.size()];
         for (int i = 0; i < this.players.size(); i++){
-            result[i] = widths.get(this.players.get(i));
+            result[i] = this.widths.get(this.players.get(i));
+            //System.out.println(result[i]);
         }
         return result;
     }

@@ -2,6 +2,10 @@ package Tanks;
 
 public class HUD extends App{
 
+    static int displayIndex = 0;
+    static long lastUpdateTime = 0;
+    public static boolean started = false;
+
     public static void displayTEXTS(App app){
         app.pushStyle();
         app.fill(0);
@@ -25,10 +29,17 @@ public class HUD extends App{
         app.text(app.CurrentPlayer.fuel, WIDTH/2 - 7*CELLSIZE, CELLSIZE);
         app.popStyle();
         
+        // app.pushStyle();
+        // app.fill(0);
+        // app.textSize(16);
+        // app.text("Parachutes: " + app.CurrentPlayer.parachutesLeft, WIDTH/2 - 3*CELLSIZE, 5*CELLSIZE);
+        // app.popStyle();
+
         app.pushStyle();
+        app.image(parachuteIMG, WIDTH/2 - 8*CELLSIZE, CELLSIZE + 15, 25, 25);
         app.fill(0);
         app.textSize(16);
-        app.text("Parachutes: " + app.CurrentPlayer.parachutesLeft, WIDTH/2 - 3*CELLSIZE, 5*CELLSIZE);
+        app.text(app.CurrentPlayer.parachutesLeft, WIDTH/2 - 7*CELLSIZE, CELLSIZE + 35);
         app.popStyle();
 
         if (app.Wind >= 0){
@@ -94,4 +105,20 @@ public class HUD extends App{
         app.popStyle();
     }
 
-}
+    public static void displayEndGame(App app, int i){
+        player current = app.playingOnBoard.get(i);
+        app.fill(current.color[0], current.color[1], current.color[2]);
+        app.textSize(40);
+        app.text("Player " + current.type, WIDTH/2- 6*CELLSIZE , HEIGHT/2 + (i) * 2 * CELLSIZE - 15);
+        app.fill(0);
+        app.textSize(40);
+        app.text(current.score, WIDTH/2 + 4*CELLSIZE, HEIGHT/2 + (i) *  2 * CELLSIZE - 15);
+
+        // long time = app.millis();
+        // if (time%1000 == 0){
+
+        // }
+        
+        }
+    }
+

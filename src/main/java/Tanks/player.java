@@ -13,6 +13,7 @@ public class player extends App{
     public int health;
     public int power;
     public int score;
+    public int shield = 0;
     public int parachutesLeft= 3;
     public boolean parachute_used = false;
     public boolean isHit;
@@ -40,7 +41,7 @@ public class player extends App{
         //     this.y += 0.5;
         // }
         if (isHit) {
-            if (this.y > Terrain.terrainForExplosion.get(this.x) - 10) {
+            if (this.y > Terrain.terrainForExplosion.get(this.x) - 11) {
                 isHit = false;
                 if(this.parachute_used){
                     this.parachutesLeft--;
@@ -56,7 +57,9 @@ public class player extends App{
             else{
                 this.turretCoord.y += 2;
                 this.y += 2;
-                this.health -= 1;
+                if (this.shield < 1){
+                    this.health -= 1;
+                }
             }
         }
         app.noStroke();
