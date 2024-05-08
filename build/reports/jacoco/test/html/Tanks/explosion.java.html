@@ -23,23 +23,22 @@ import processing.core.PApplet;
       //   System.out.println(&quot;previous height of &quot; +  app.playingOnBoard.get(s).type + &quot; &quot; + previousHeights[s]);
       // }
 
-
-<span class="nc bnc" id="L27" title="All 2 branches missed.">      for (int i = Math.max(0, (int)proj.x - (int) r); i &lt; Math.min(Terrain.terrainForExplosion.size(), (int)proj.x + (int) r); i++) {</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">      for (int i = Math.max(0, (int)proj.x - (int) r); i &lt; Math.min(Terrain.terrainForExplosion.size(), (int)proj.x + (int) r); i++) {</span>
           
-<span class="nc" id="L29">          float d = Math.abs(i - proj.x);</span>
+<span class="nc" id="L28">          float d = Math.abs(i - proj.x);</span>
           
-<span class="nc" id="L31">          float semiCircleHeight = (float) Math.sqrt(Math.max(0, r * r - d * d));</span>
-<span class="nc bnc" id="L32" title="All 4 branches missed.">          if (Terrain.terrainForExplosion.get(i)&lt; proj.y + semiCircleHeight &amp;&amp; Terrain.terrainForExplosion.get(i) &gt; proj.y - semiCircleHeight) {</span>
+<span class="nc" id="L30">          float semiCircleHeight = (float) Math.sqrt(Math.max(0, r * r - d * d));</span>
+<span class="nc bnc" id="L31" title="All 4 branches missed.">          if (Terrain.terrainForExplosion.get(i)&lt; proj.y + semiCircleHeight &amp;&amp; Terrain.terrainForExplosion.get(i) &gt; proj.y - semiCircleHeight) {</span>
               
-<span class="nc" id="L34">              terrainHeightBefore = Terrain.terrainForExplosion.get(i);</span>
-<span class="nc" id="L35">              Terrain.terrainForExplosion.set(i,proj.y + semiCircleHeight);</span>
-<span class="nc" id="L36">              terrainHeightAfter = Terrain.terrainForExplosion.get(i);</span>
-<span class="nc bnc" id="L37" title="All 2 branches missed.">          } else if (Terrain.terrainForExplosion.get(i) &lt; proj.y - semiCircleHeight) {</span>
+<span class="nc" id="L33">              terrainHeightBefore = Terrain.terrainForExplosion.get(i);</span>
+<span class="nc" id="L34">              Terrain.terrainForExplosion.set(i,proj.y + semiCircleHeight);</span>
+<span class="nc" id="L35">              terrainHeightAfter = Terrain.terrainForExplosion.get(i);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">          } else if (Terrain.terrainForExplosion.get(i) &lt; proj.y - semiCircleHeight) {</span>
 
-<span class="nc" id="L39">              terrainHeightBefore = Terrain.terrainForExplosion.get(i);</span>
-<span class="nc" id="L40">              Terrain.terrainForExplosion.set(i, Terrain.terrainForExplosion.get(i) + 2 * semiCircleHeight);</span>
-<span class="nc" id="L41">              Terrain.terrainForExplosion.set(i, Math.min(Terrain.terrainForExplosion.get(i), proj.y + semiCircleHeight));</span>
-<span class="nc" id="L42">              terrainHeightAfter = Terrain.terrainForExplosion.get(i);</span>
+<span class="nc" id="L38">              terrainHeightBefore = Terrain.terrainForExplosion.get(i);</span>
+<span class="nc" id="L39">              Terrain.terrainForExplosion.set(i, Terrain.terrainForExplosion.get(i) + 2 * semiCircleHeight);</span>
+<span class="nc" id="L40">              Terrain.terrainForExplosion.set(i, Math.min(Terrain.terrainForExplosion.get(i), proj.y + semiCircleHeight));</span>
+<span class="nc" id="L41">              terrainHeightAfter = Terrain.terrainForExplosion.get(i);</span>
           }
       }
 
@@ -54,47 +53,60 @@ import processing.core.PApplet;
       //   //app.playingOnBoard.get(i).y = Terrain.terrainForExplosion.get(app.playingOnBoard.get(i).x);
       // }
       // app.CurrentPlayer.draw(app);
-<span class="nc" id="L57">    }</span>
+<span class="nc" id="L56">    }</span>
 
     public static void checkPlayerCollisions(App app, Projectile proj){
-<span class="nc" id="L60">      float[] hitRadiusXLeft = {proj.x - r, proj.y - r};</span>
-<span class="nc" id="L61">      float[] hitRadiusXRight = {proj.x + r, proj.y + r}; </span>
+<span class="nc" id="L59">      float[] hitRadiusXLeft = {proj.x - r, proj.y - r};</span>
+<span class="nc" id="L60">      float[] hitRadiusXRight = {proj.x + r, proj.y + r}; </span>
 
-<span class="nc bnc" id="L63" title="All 2 branches missed.">      for (int i = 0; i &lt; app.playingOnBoard.size(); i++){</span>
-<span class="nc bnc" id="L64" title="All 4 branches missed.">        if ((app.playingOnBoard.get(i).x &gt;= hitRadiusXLeft[0]) &amp;&amp; (app.playingOnBoard.get(i).x &lt;= hitRadiusXRight[0])){ //  &amp;&amp; (app.playingOnBoard.get(i).y &gt;= hitRadiusXLeft[1]) &amp;&amp; (app.playingOnBoard.get(i).y &lt;= hitRadiusXRight[1])</span>
-<span class="nc bnc" id="L65" title="All 4 branches missed.">          if ((app.playingOnBoard.get(i).y &gt;= hitRadiusXLeft[1]) &amp;&amp; (app.playingOnBoard.get(i).y &lt;= hitRadiusXRight[1])){</span>
-<span class="nc" id="L66">            app.playingOnBoard.get(i).health -= 30;</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">      for (int i = 0; i &lt; app.playingOnBoard.size(); i++){</span>
+<span class="nc bnc" id="L63" title="All 4 branches missed.">        if ((app.playingOnBoard.get(i).x &gt;= hitRadiusXLeft[0]) &amp;&amp; (app.playingOnBoard.get(i).x &lt;= hitRadiusXRight[0])){ //  &amp;&amp; (app.playingOnBoard.get(i).y &gt;= hitRadiusXLeft[1]) &amp;&amp; (app.playingOnBoard.get(i).y &lt;= hitRadiusXRight[1])</span>
+<span class="nc bnc" id="L64" title="All 4 branches missed.">          if ((app.playingOnBoard.get(i).y &gt;= hitRadiusXLeft[1]) &amp;&amp; (app.playingOnBoard.get(i).y &lt;= hitRadiusXRight[1])){</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">            if ((app.playingOnBoard.get(i).shield == 0)){</span>
+<span class="nc" id="L66">              app.playingOnBoard.get(i).health -= 30;</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">              if (app.playingOnBoard.get(i).health &lt; app.playingOnBoard.get(i).power){</span>
+<span class="nc" id="L68">                app.playingOnBoard.get(i).power = app.playingOnBoard.get(i).health;</span>
+              }
+<span class="nc" id="L70">              proj.updatePlayerScore();</span>
+            }
+            else{
+<span class="nc" id="L73">              app.playingOnBoard.get(i).shield--;</span>
+            }
           }
-<span class="nc" id="L68">          proj.updatePlayerScore();</span>
-<span class="nc bnc" id="L69" title="All 2 branches missed.">          if (app.playingOnBoard.get(i).health &lt;= 0){</span>
-<span class="nc" id="L70">            drawExplosion(app, app.playingOnBoard.get(i).x, app.playingOnBoard.get(i).y);</span>
-<span class="nc" id="L71">            pastPlayerScores.put(app.playingOnBoard.get(i).type, app.playingOnBoard.get(i).score);</span>
-<span class="nc" id="L72">            app.playingOnBoard.remove(app.playingOnBoard.get(i));</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">          if (app.playingOnBoard.get(i).health &lt;= 0){</span>
+<span class="nc" id="L77">            drawExplosion(app, app.playingOnBoard.get(i).x, app.playingOnBoard.get(i).y);</span>
+<span class="nc" id="L78">            pastPlayerScores.put(app.playingOnBoard.get(i).type, app.playingOnBoard.get(i).score);</span>
+<span class="nc" id="L79">            app.playingOnBoard.remove(app.playingOnBoard.get(i));</span>
           }
-<span class="nc" id="L74">          app.playingOnBoard.get(i).isHit = true;</span>
+<span class="nc" id="L81">          app.playingOnBoard.get(i).isHit = true;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">          if (app.playingOnBoard.get(i).health &lt;= 0){</span>
+<span class="nc" id="L83">            drawExplosion(app, app.playingOnBoard.get(i).x, app.playingOnBoard.get(i).y);</span>
+<span class="nc" id="L84">            pastPlayerScores.put(app.playingOnBoard.get(i).type, app.playingOnBoard.get(i).score);</span>
+<span class="nc" id="L85">            app.playingOnBoard.remove(app.playingOnBoard.get(i));</span>
+          }
         }
       }
-<span class="nc" id="L77">    }</span>
+<span class="nc" id="L89">    }</span>
 
     public static void drawExplosion(App app, float x, float y) {
-<span class="nc bnc" id="L80" title="All 2 branches missed.">        for (int i = 0; i &lt; 6; i++) {</span>
-<span class="nc bnc" id="L81" title="All 4 branches missed.">          if (i == 0 || i == 1) {</span>
-<span class="nc" id="L82">            app.fill(INNER[0], INNER[1], INNER[2]);</span>
-<span class="nc" id="L83">            app.ellipse(x, y, INNER_RADIUS * 2, INNER_RADIUS * 2);</span>
-<span class="nc bnc" id="L84" title="All 4 branches missed.">          } else if (i == 2 || i == 3) {</span>
-<span class="nc" id="L85">            app.fill(MIDDLE[0], MIDDLE[1], MIDDLE[2]);</span>
-<span class="nc" id="L86">            app.ellipse(x, y, MIDDLE_RADIUS * 2, MIDDLE_RADIUS * 2);</span>
-<span class="nc" id="L87">            app.fill(INNER[0], INNER[1], INNER[2]);</span>
-<span class="nc" id="L88">            app.ellipse(x, y, INNER_RADIUS * 2, INNER_RADIUS * 2);</span>
-          } else {
-<span class="nc" id="L90">            app.fill(OUTER[0], OUTER[1], OUTER[2]);</span>
-<span class="nc" id="L91">            app.ellipse(x, y, OUTER_RADIUS * 2, OUTER_RADIUS * 2);</span>
-<span class="nc" id="L92">            app.fill(MIDDLE[0], MIDDLE[1], MIDDLE[2]);</span>
-<span class="nc" id="L93">            app.ellipse(x, y, MIDDLE_RADIUS * 2, MIDDLE_RADIUS * 2);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        for (int i = 0; i &lt; 6; i++) {</span>
+<span class="nc bnc" id="L93" title="All 4 branches missed.">          if (i == 0 || i == 1) {</span>
 <span class="nc" id="L94">            app.fill(INNER[0], INNER[1], INNER[2]);</span>
 <span class="nc" id="L95">            app.ellipse(x, y, INNER_RADIUS * 2, INNER_RADIUS * 2);</span>
+<span class="nc bnc" id="L96" title="All 4 branches missed.">          } else if (i == 2 || i == 3) {</span>
+<span class="nc" id="L97">            app.fill(MIDDLE[0], MIDDLE[1], MIDDLE[2]);</span>
+<span class="nc" id="L98">            app.ellipse(x, y, MIDDLE_RADIUS * 2, MIDDLE_RADIUS * 2);</span>
+<span class="nc" id="L99">            app.fill(INNER[0], INNER[1], INNER[2]);</span>
+<span class="nc" id="L100">            app.ellipse(x, y, INNER_RADIUS * 2, INNER_RADIUS * 2);</span>
+          } else {
+<span class="nc" id="L102">            app.fill(OUTER[0], OUTER[1], OUTER[2]);</span>
+<span class="nc" id="L103">            app.ellipse(x, y, OUTER_RADIUS * 2, OUTER_RADIUS * 2);</span>
+<span class="nc" id="L104">            app.fill(MIDDLE[0], MIDDLE[1], MIDDLE[2]);</span>
+<span class="nc" id="L105">            app.ellipse(x, y, MIDDLE_RADIUS * 2, MIDDLE_RADIUS * 2);</span>
+<span class="nc" id="L106">            app.fill(INNER[0], INNER[1], INNER[2]);</span>
+<span class="nc" id="L107">            app.ellipse(x, y, INNER_RADIUS * 2, INNER_RADIUS * 2);</span>
           }
         }
-<span class="nc" id="L98">      }</span>
+<span class="nc" id="L110">      }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

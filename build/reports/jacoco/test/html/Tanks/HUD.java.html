@@ -2,97 +2,128 @@
 
 <span class="nc" id="L3">public class HUD extends App{</span>
 
+<span class="fc" id="L5">    static int displayIndex = 0;</span>
+<span class="fc" id="L6">    static long lastUpdateTime = 0;</span>
+<span class="fc" id="L7">    public static boolean started = false;</span>
+
     public static void displayTEXTS(App app){
-<span class="fc" id="L6">        app.pushStyle();</span>
-<span class="fc" id="L7">        app.fill(0);</span>
-<span class="fc" id="L8">        app.textSize(16);</span>
-<span class="fc" id="L9">        app.text(&quot;Player &quot; + app.CurrentPlayer.type + &quot;'s Turn&quot;, 13, CELLSIZE);</span>
-<span class="fc" id="L10">        app.popStyle();</span>
+<span class="fc" id="L10">        app.pushStyle();</span>
+<span class="fc" id="L11">        app.fill(0);</span>
+<span class="fc" id="L12">        app.textSize(16);</span>
+<span class="fc" id="L13">        app.text(&quot;Player &quot; + app.CurrentPlayer.type + &quot;'s Turn&quot;, 13, CELLSIZE);</span>
+<span class="fc" id="L14">        app.popStyle();</span>
 
-<span class="fc" id="L12">        app.pushStyle();</span>
-<span class="fc" id="L13">        app.fill(0);</span>
-<span class="fc" id="L14">        app.textSize(16);</span>
-<span class="fc" id="L15">        app.text(&quot;Power: &quot; + app.CurrentPlayer.power, WIDTH/2 - 3*CELLSIZE, 2*CELLSIZE); </span>
-<span class="fc" id="L16">        app.popStyle();</span>
-
-<span class="fc" id="L18">        app.pushStyle();</span>
-<span class="fc" id="L19">        app.image(app.fuelIMG,  WIDTH/2 - 8*CELLSIZE, 10, 25, 25);</span>
+<span class="fc" id="L16">        app.pushStyle();</span>
+<span class="fc" id="L17">        app.fill(0);</span>
+<span class="fc" id="L18">        app.textSize(16);</span>
+<span class="fc" id="L19">        app.text(&quot;Power: &quot; + app.CurrentPlayer.power, WIDTH/2 - 3*CELLSIZE, 2*CELLSIZE); </span>
 <span class="fc" id="L20">        app.popStyle();</span>
 
 <span class="fc" id="L22">        app.pushStyle();</span>
-<span class="fc" id="L23">        app.fill(0);</span>
-<span class="fc" id="L24">        app.textSize(16);</span>
-<span class="fc" id="L25">        app.text(app.CurrentPlayer.fuel, WIDTH/2 - 7*CELLSIZE, CELLSIZE);</span>
-<span class="fc" id="L26">        app.popStyle();</span>
-        
-<span class="fc" id="L28">        app.pushStyle();</span>
-<span class="fc" id="L29">        app.fill(0);</span>
-<span class="fc" id="L30">        app.textSize(16);</span>
-<span class="fc" id="L31">        app.text(&quot;Parachutes: &quot; + app.CurrentPlayer.parachutesLeft, WIDTH/2 - 3*CELLSIZE, 5*CELLSIZE);</span>
-<span class="fc" id="L32">        app.popStyle();</span>
+<span class="fc" id="L23">        app.image(app.fuelIMG,  WIDTH/2 - 8*CELLSIZE, 10, 25, 25);</span>
+<span class="fc" id="L24">        app.popStyle();</span>
 
-<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (app.Wind &gt;= 0){</span>
-<span class="fc" id="L35">            app.pushStyle();</span>
-<span class="fc" id="L36">            app.image(app.Wind1, WIDTH - 3*CELLSIZE, 10, 65, 65);</span>
-<span class="fc" id="L37">            app.fill(0);</span>
-<span class="fc" id="L38">            app.textSize(16);</span>
-<span class="fc" id="L39">            app.text(app.Wind, WIDTH - 30, CELLSIZE + 16);</span>
-<span class="fc" id="L40">            app.popStyle();</span>
+<span class="fc" id="L26">        app.pushStyle();</span>
+<span class="fc" id="L27">        app.fill(0);</span>
+<span class="fc" id="L28">        app.textSize(16);</span>
+<span class="fc" id="L29">        app.text(app.CurrentPlayer.fuel, WIDTH/2 - 7*CELLSIZE, CELLSIZE);</span>
+<span class="fc" id="L30">        app.popStyle();</span>
+        
+        // app.pushStyle();
+        // app.fill(0);
+        // app.textSize(16);
+        // app.text(&quot;Parachutes: &quot; + app.CurrentPlayer.parachutesLeft, WIDTH/2 - 3*CELLSIZE, 5*CELLSIZE);
+        // app.popStyle();
+
+<span class="fc" id="L38">        app.pushStyle();</span>
+<span class="fc" id="L39">        app.image(parachuteIMG, WIDTH/2 - 8*CELLSIZE, CELLSIZE + 15, 25, 25);</span>
+<span class="fc" id="L40">        app.fill(0);</span>
+<span class="fc" id="L41">        app.textSize(16);</span>
+<span class="fc" id="L42">        app.text(app.CurrentPlayer.parachutesLeft, WIDTH/2 - 7*CELLSIZE, CELLSIZE + 35);</span>
+<span class="fc" id="L43">        app.popStyle();</span>
+
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        if (app.Wind &gt;= 0){</span>
+<span class="fc" id="L46">            app.pushStyle();</span>
+<span class="fc" id="L47">            app.image(app.Wind1, WIDTH - 3*CELLSIZE, 10, 65, 65);</span>
+<span class="fc" id="L48">            app.fill(0);</span>
+<span class="fc" id="L49">            app.textSize(16);</span>
+<span class="fc" id="L50">            app.text(app.Wind, WIDTH - 30, CELLSIZE + 16);</span>
+<span class="fc" id="L51">            app.popStyle();</span>
         }
         else{
-<span class="fc" id="L43">            app.pushStyle();</span>
-<span class="fc" id="L44">            app.image(app.Wind2, WIDTH - 3*CELLSIZE, 10, 65, 65);</span>
-<span class="fc" id="L45">            app.fill(0);</span>
-<span class="fc" id="L46">            app.textSize(16);</span>
-<span class="fc" id="L47">            app.text(app.Wind, WIDTH - 30, CELLSIZE + 16);</span>
-<span class="fc" id="L48">            app.popStyle();</span>
+<span class="nc" id="L54">            app.pushStyle();</span>
+<span class="nc" id="L55">            app.image(app.Wind2, WIDTH - 3*CELLSIZE, 10, 65, 65);</span>
+<span class="nc" id="L56">            app.fill(0);</span>
+<span class="nc" id="L57">            app.textSize(16);</span>
+<span class="nc" id="L58">            app.text(app.Wind, WIDTH - 30, CELLSIZE + 16);</span>
+<span class="nc" id="L59">            app.popStyle();</span>
         }
 
         
-<span class="fc" id="L52">    }</span>
+<span class="fc" id="L63">    }</span>
 
     public static void displayHealthBar(App app){
-<span class="fc" id="L55">        app.pushStyle();</span>
-<span class="fc" id="L56">        app.fill(0);</span>
-<span class="fc" id="L57">        app.textSize(16);</span>
-<span class="fc" id="L58">        app.text(&quot;Health: &quot; + app.CurrentPlayer.health, WIDTH/2 - 3*CELLSIZE, CELLSIZE); </span>
-<span class="fc" id="L59">        app.popStyle();</span>
+<span class="fc" id="L66">        app.pushStyle();</span>
+<span class="fc" id="L67">        app.fill(0);</span>
+<span class="fc" id="L68">        app.textSize(16);</span>
+<span class="fc" id="L69">        app.text(&quot;Health: &quot; + app.CurrentPlayer.health, WIDTH/2 - 3*CELLSIZE, CELLSIZE); </span>
+<span class="fc" id="L70">        app.popStyle();</span>
 
-<span class="fc" id="L61">        app.pushStyle();</span>
-<span class="fc" id="L62">        app.stroke(0);</span>
-<span class="fc" id="L63">        app.fill(255);</span>
-<span class="fc" id="L64">        app.rect(WIDTH/2, CELLSIZE/2 - 1, 150, 25);</span>
-<span class="fc" id="L65">        app.stroke(0);</span>
-<span class="fc" id="L66">        app.fill(app.CurrentPlayer.color[0], app.CurrentPlayer.color[1], app.CurrentPlayer.color[2]);</span>
-<span class="fc" id="L67">        app.rect(WIDTH/2, CELLSIZE/2 - 1, 1.5f * app.CurrentPlayer.health, 25);</span>
-<span class="fc" id="L68">        app.popStyle();</span>
+<span class="fc" id="L72">        app.pushStyle();</span>
+<span class="fc" id="L73">        app.stroke(0);</span>
+<span class="fc" id="L74">        app.fill(255);</span>
+<span class="fc" id="L75">        app.rect(WIDTH/2, CELLSIZE/2 - 1, 150, 25);</span>
+<span class="fc" id="L76">        app.stroke(0);</span>
+<span class="fc" id="L77">        app.fill(app.CurrentPlayer.color[0], app.CurrentPlayer.color[1], app.CurrentPlayer.color[2]);</span>
+<span class="fc" id="L78">        app.rect(WIDTH/2, CELLSIZE/2 - 1, 1.5f * app.CurrentPlayer.health, 25);</span>
+
+<span class="fc" id="L80">        app.stroke(200);</span>
+<span class="fc" id="L81">        app.fill(app.CurrentPlayer.color[0], app.CurrentPlayer.color[1], app.CurrentPlayer.color[2]);</span>
+<span class="fc" id="L82">        app.rect(WIDTH/2, CELLSIZE/2 - 1, 1.5f * app.CurrentPlayer.power, 25);</span>
+<span class="fc" id="L83">        app.popStyle();</span>
         
-<span class="fc" id="L70">    }</span>
+<span class="fc" id="L85">    }</span>
 
     public static void displayScoreBoard(App app){
-<span class="fc" id="L73">        app.pushStyle();</span>
-<span class="fc" id="L74">        app.stroke(0);</span>
-<span class="fc" id="L75">        app.fill(0, 0, 0, 0);</span>
-<span class="fc" id="L76">        app.rect(WIDTH - 6*CELLSIZE, 3*CELLSIZE,  180, 35);</span>
-<span class="fc" id="L77">        app.fill(0);</span>
-<span class="fc" id="L78">        app.textSize(25);</span>
-<span class="fc" id="L79">        app.text(&quot;Scores&quot;, WIDTH - 6*CELLSIZE + 15, 3*CELLSIZE + 25); </span>
-<span class="fc" id="L80">        app.stroke(0);</span>
-<span class="fc" id="L81">        app.fill(0, 0, 0, 0);</span>
-<span class="fc" id="L82">        app.rect(WIDTH - 6*CELLSIZE, 4*CELLSIZE,  180, 110);</span>
-<span class="fc" id="L83">        int j = 25;</span>
-<span class="fc bfc" id="L84" title="All 2 branches covered.">        for (int i = 0; i &lt; app.playingOnBoard.size(); i ++){</span>
-<span class="fc" id="L85">            player current = app.playingOnBoard.get(i);</span>
-<span class="fc" id="L86">            app.fill(current.color[0], current.color[1], current.color[2]);</span>
-<span class="fc" id="L87">            app.textSize(15);</span>
-<span class="fc" id="L88">            app.text(&quot;Player &quot;+ current.type, WIDTH - 6*CELLSIZE + 15, 4*CELLSIZE + j); </span>
-<span class="fc" id="L89">            app.fill(0);</span>
-<span class="fc" id="L90">            app.textSize(15);</span>
-<span class="fc" id="L91">            app.text(current.score, WIDTH - 2*CELLSIZE + 15, 4*CELLSIZE + j); </span>
-<span class="fc" id="L92">            j+=25;</span>
+<span class="fc" id="L88">        app.pushStyle();</span>
+<span class="fc" id="L89">        app.stroke(0);</span>
+<span class="fc" id="L90">        app.fill(0, 0, 0, 0);</span>
+<span class="fc" id="L91">        app.rect(WIDTH - 6*CELLSIZE, 3*CELLSIZE,  180, 35);</span>
+<span class="fc" id="L92">        app.fill(0);</span>
+<span class="fc" id="L93">        app.textSize(25);</span>
+<span class="fc" id="L94">        app.text(&quot;Scores&quot;, WIDTH - 6*CELLSIZE + 15, 3*CELLSIZE + 25); </span>
+<span class="fc" id="L95">        app.stroke(0);</span>
+<span class="fc" id="L96">        app.fill(0, 0, 0, 0);</span>
+<span class="fc" id="L97">        app.rect(WIDTH - 6*CELLSIZE, 4*CELLSIZE,  180, 110);</span>
+<span class="fc" id="L98">        int j = 25;</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        for (int i = 0; i &lt; app.playingOnBoard.size(); i ++){</span>
+<span class="fc" id="L100">            player current = app.playingOnBoard.get(i);</span>
+<span class="fc" id="L101">            app.fill(current.color[0], current.color[1], current.color[2]);</span>
+<span class="fc" id="L102">            app.textSize(15);</span>
+<span class="fc" id="L103">            app.text(&quot;Player &quot;+ current.type, WIDTH - 6*CELLSIZE + 15, 4*CELLSIZE + j); </span>
+<span class="fc" id="L104">            app.fill(0);</span>
+<span class="fc" id="L105">            app.textSize(15);</span>
+<span class="fc" id="L106">            app.text(current.score, WIDTH - 2*CELLSIZE + 15, 4*CELLSIZE + j); </span>
+<span class="fc" id="L107">            j+=25;</span>
         }
-<span class="fc" id="L94">        app.popStyle();</span>
-<span class="fc" id="L95">    }</span>
+<span class="fc" id="L109">        app.popStyle();</span>
+<span class="fc" id="L110">    }</span>
 
-}
+    public static void displayEndGame(App app, int i){
+<span class="nc" id="L113">        player current = app.backupForEndGame.get(i);</span>
+<span class="nc" id="L114">        app.fill(current.color[0], current.color[1], current.color[2]);</span>
+<span class="nc" id="L115">        app.textSize(40);</span>
+<span class="nc" id="L116">        app.text(&quot;Player &quot; + current.type, WIDTH/2- 6*CELLSIZE , HEIGHT/2 + (i) * 2 * CELLSIZE - 15);</span>
+<span class="nc" id="L117">        app.fill(0);</span>
+<span class="nc" id="L118">        app.textSize(40);</span>
+<span class="nc" id="L119">        app.text(current.score, WIDTH/2 + 4*CELLSIZE, HEIGHT/2 + (i) *  2 * CELLSIZE - 15);</span>
+
+        // long time = app.millis();
+        // if (time%1000 == 0){
+
+        // }
+        
+<span class="nc" id="L126">        }</span>
+    }
+
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -23,7 +23,6 @@ public class explosion extends App{
       //   System.out.println("previous height of " +  app.playingOnBoard.get(s).type + " " + previousHeights[s]);
       // }
 
-
       for (int i = Math.max(0, (int)proj.x - (int) r); i < Math.min(Terrain.terrainForExplosion.size(), (int)proj.x + (int) r); i++) {
           
           float d = Math.abs(i - proj.x);

@@ -83,26 +83,27 @@ public class Terrain  extends App{
 <span class="fc" id="L83">        int[] result = new int[this.players.size()];</span>
 <span class="fc bfc" id="L84" title="All 2 branches covered.">        for (int i = 0; i &lt; this.players.size(); i++){</span>
 <span class="fc" id="L85">            result[i] = this.widths.get(this.players.get(i));</span>
+            //System.out.println(result[i]);
         }
-<span class="fc" id="L87">        return result;</span>
+<span class="fc" id="L88">        return result;</span>
     }
 
     public float[] getPlayerCoordsY(){
-<span class="fc" id="L91">        float[] result = new float[this.players.size()];</span>
-<span class="fc bfc" id="L92" title="All 2 branches covered.">        for (int i = 0; i &lt; this.players.size(); i++){</span>
-<span class="fc" id="L93">            result[i] = terrainForExplosion.get(this.players.get(i)) - 5;</span>
+<span class="fc" id="L92">        float[] result = new float[this.players.size()];</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        for (int i = 0; i &lt; this.players.size(); i++){</span>
+<span class="fc" id="L94">            result[i] = terrainForExplosion.get(this.players.get(i)) - 5;</span>
         }
-<span class="fc" id="L95">        return result;</span>
+<span class="fc" id="L96">        return result;</span>
     }
 
     public void drawTrees(PApplet app){
-<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (this.treeLoc != null){</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">            for (int i = 0; i &lt; this.treesLs.size(); i++){</span>
-<span class="fc" id="L101">                int current = treesLs.get(i);</span>
-<span class="fc" id="L102">                app.image(treeLoc, widths.get(current)-16, terrainForExplosion.get(current)-30, CELLSIZE, CELLSIZE);</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if (this.treeLoc != null){</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            for (int i = 0; i &lt; this.treesLs.size(); i++){</span>
+<span class="fc" id="L102">                int current = treesLs.get(i);</span>
+<span class="fc" id="L103">                app.image(treeLoc, widths.get(current)-16, terrainForExplosion.get(current)-30, CELLSIZE, CELLSIZE);</span>
             }
         }
-<span class="fc" id="L105">    }</span>
+<span class="fc" id="L106">    }</span>
     
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
