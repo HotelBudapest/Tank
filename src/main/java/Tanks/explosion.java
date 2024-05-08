@@ -65,6 +65,9 @@ public class explosion extends App{
           if ((app.playingOnBoard.get(i).y >= hitRadiusXLeft[1]) && (app.playingOnBoard.get(i).y <= hitRadiusXRight[1])){
             if ((app.playingOnBoard.get(i).shield == 0)){
               app.playingOnBoard.get(i).health -= 30;
+              if (app.playingOnBoard.get(i).health < app.playingOnBoard.get(i).power){
+                app.playingOnBoard.get(i).power = app.playingOnBoard.get(i).health;
+              }
               proj.updatePlayerScore();
             }
             else{

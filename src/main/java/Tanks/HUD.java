@@ -76,6 +76,10 @@ public class HUD extends App{
         app.stroke(0);
         app.fill(app.CurrentPlayer.color[0], app.CurrentPlayer.color[1], app.CurrentPlayer.color[2]);
         app.rect(WIDTH/2, CELLSIZE/2 - 1, 1.5f * app.CurrentPlayer.health, 25);
+
+        app.stroke(200);
+        app.fill(app.CurrentPlayer.color[0], app.CurrentPlayer.color[1], app.CurrentPlayer.color[2]);
+        app.rect(WIDTH/2, CELLSIZE/2 - 1, 1.5f * app.CurrentPlayer.power, 25);
         app.popStyle();
         
     }
@@ -106,7 +110,7 @@ public class HUD extends App{
     }
 
     public static void displayEndGame(App app, int i){
-        player current = app.playingOnBoard.get(i);
+        player current = app.backupForEndGame.get(i);
         app.fill(current.color[0], current.color[1], current.color[2]);
         app.textSize(40);
         app.text("Player " + current.type, WIDTH/2- 6*CELLSIZE , HEIGHT/2 + (i) * 2 * CELLSIZE - 15);

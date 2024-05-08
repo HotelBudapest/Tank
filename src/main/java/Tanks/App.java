@@ -37,6 +37,7 @@ public class App extends PApplet {
     ArrayList<player> playingOnBoard = new ArrayList<player>();
     public HashMap<String ,int[]> playerColorValues = new HashMap<String ,int[]>();
     player CurrentPlayer;
+    ArrayList<player> backupForEndGame = new ArrayList<player>();
 
     
     public static HashMap<String, Integer> pastPlayerScores = new HashMap<String, Integer>();
@@ -233,6 +234,7 @@ public class App extends PApplet {
             }
 
             CurrentPlayer = playingOnBoard.get(0);
+            backupForEndGame = new ArrayList<player>(playingOnBoard);
 
             reader.close();
 
@@ -246,7 +248,7 @@ public class App extends PApplet {
 
     }
 
-    public void restartGame(){
+    public void changeLevel(){
         for (int i = 0; i < playingOnBoard.size(); i++){
             pastPlayerScores.put(playingOnBoard.get(i).type, playingOnBoard.get(i).score);
         }
@@ -254,6 +256,7 @@ public class App extends PApplet {
         noLoop();
         stageManagerINT++;
         if (stageManagerINT >= 3){
+            sortPlayers(backupForEndGame);
             isgameOver = true;
             HUD.displayEndGame(this, 0);
         }
@@ -319,10 +322,14 @@ public class App extends PApplet {
             }
         }
         if (key == 'W' || key == 'w') {
-            CurrentPlayer.power += 36/FPS;
+            if (CurrentPlayer.power < CurrentPlayer.health){
+                CurrentPlayer.power += 36/FPS;
+            }
         }
         if (key == 'S' || key == 's') {
-            CurrentPlayer.power -= 36/FPS;
+            if (CurrentPlayer.power > 0){
+                CurrentPlayer.power -= 36/FPS;
+            }
         }
         if (key == 'H' || key == 'h') {
             if (CurrentPlayer.score >= 20){
@@ -343,11 +350,16 @@ public class App extends PApplet {
             }
         }
         if (key == 'y' || key == 'Y') {
+            // for (int i = 65; i < 65 + pastPlayerScores.size(); i++){
+
+            // }
+            sortPlayers(backupForEndGame);
             isgameOver = true;
         }
         if (key == 'R' || key == 'r') {
-            if (stageManagerINT >= 3){
+            if (isgameOver){
                 stageManagerINT = 0;
+                isgameOver = false;
                 restartGame();
             }
             else{
@@ -357,6 +369,20 @@ public class App extends PApplet {
                 }
             }
         }
+    }
+
+    public void restartGame(){
+        noLoop();
+        turnManagerINT = 0;
+        board = new int[32][32];
+        treesLs = new ArrayList<Integer>();
+        terrainHeightsInitial = new ArrayList<Integer>();
+        arektaManager = 0;
+        projectiles = new ArrayList<Projectile>();
+        playingOnBoard = new ArrayList<player>();
+        backupForEndGame = new ArrayList<player>();
+        setup();
+        loop();
     }
 
     /**
@@ -379,6 +405,18 @@ public class App extends PApplet {
 
     }
 
+    public void sortPlayers(ArrayList<player> players){
+        for (int i = 1; i < players.size(); i++) {
+            player current = players.get(i);
+            int j = i - 1;
+            while (j >= 0 && players.get(j).score < current.score) {
+                players.set(j + 1, players.get(j));
+                j = j - 1;
+            }
+            players.set(j + 1, current);
+        }
+    }
+
     /**
      * Draw all elements in the game by current frame.
      */
@@ -388,17 +426,21 @@ public class App extends PApplet {
 
         if (isgameOver){
             if(((frameCount - startTime)/FPS)%1 == 0){
-                fill(255, 0, 0, 20);
+                fill(0);
+                textSize(25);
+                text("Player " + backupForEndGame.get(0).type +  " Wins!", WIDTH/2 - 6 * CELLSIZE, HEIGHT/2 - 6 * CELLSIZE + 15);
+                
+                fill(backupForEndGame.get(0).color[0], backupForEndGame.get(0).color[1], backupForEndGame.get(0).color[2], 20);
                 stroke(0);
                 rect(WIDTH/2 - 7 * CELLSIZE, HEIGHT/2 - 5 * CELLSIZE, 450, 100);
                 fill(0);
-                textSize(25);
+                textSize(40);
                 text("Final Scores", WIDTH/2 - 5 * CELLSIZE, HEIGHT/2 - 3 * CELLSIZE);
-                fill(255, 0, 0, 20);
+                fill(backupForEndGame.get(0).color[0], backupForEndGame.get(0).color[1], backupForEndGame.get(0).color[2], 20);
                 rect(WIDTH/2 - 7 * CELLSIZE, HEIGHT/2 - 2 * CELLSIZE, 450, 250);
-                HUD.displayEndGame(this, arektaManager%4);
+                HUD.displayEndGame(this, arektaManager%backupForEndGame.size());
                 arektaManager++;
-                if (arektaManager > 3){
+                if (arektaManager >= backupForEndGame.size()){
                     noLoop();
                 }
             }
@@ -419,9 +461,10 @@ public class App extends PApplet {
             //HUD.display(this);
 
             if (playingOnBoard.size() == 1){
-                restartGame();
+                changeLevel();
             }
             if (stageManagerINT >= 3){
+                sortPlayers(backupForEndGame);
                 isgameOver = true;
             }
 
