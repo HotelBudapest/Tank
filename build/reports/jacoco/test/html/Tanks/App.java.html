@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tanks</a> &gt; <a href="index.source.html" class="el_package">Tanks</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">package Tanks;
+
+import processing.core.PApplet;
+import processing.core.PImage;
+import processing.core.PVector;
+import processing.data.JSONArray;
+import processing.data.JSONObject;
+import processing.event.KeyEvent;
+import processing.event.MouseEvent;
+
+import java.io.*;
+import java.util.*;
+
+import jogamp.graph.curve.tess.Loop;
+
+public class App extends PApplet {
+
+    public static final int CELLSIZE = 32; //8;
+    public static final int CELLHEIGHT = 32;
+
+    public static final int CELLAVG = 32;
+    public static final int TOPBAR = 0;
+<span class="fc" id="L23">    public static int WIDTH = 864; //CELLSIZE*BOARD_WIDTH;</span>
+<span class="fc" id="L24">    public static int HEIGHT = 640; //BOARD_HEIGHT*CELLSIZE+TOPBAR;</span>
+<span class="fc" id="L25">    public static final int BOARD_WIDTH = WIDTH/CELLSIZE;</span>
+    public static final int BOARD_HEIGHT = 20;
+<span class="fc" id="L27">    public int[][] board = new int[32][32];</span>
+<span class="fc" id="L28">    ArrayList&lt;Integer&gt; treesLs = new ArrayList&lt;Integer&gt;();</span>
+<span class="fc" id="L29">    ArrayList&lt;Integer&gt; terrainHeightsInitial = new ArrayList&lt;Integer&gt;();</span>
+
+    public Terrain terrain;
+
+    //ArrayList&lt;PVector&gt; test = new ArrayList&lt;PVector&gt;();
+<span class="fc" id="L34">    HashMap&lt;String, Integer&gt; playerLs = new HashMap&lt;String, Integer&gt;();</span>
+<span class="fc" id="L35">    ArrayList&lt;player&gt; playingOnBoard = new ArrayList&lt;player&gt;();</span>
+<span class="fc" id="L36">    public HashMap&lt;String ,int[]&gt; playerColorValues = new HashMap&lt;String ,int[]&gt;();</span>
+    player CurrentPlayer;
+
+    
+<span class="fc" id="L40">    public static HashMap&lt;String, Integer&gt; pastPlayerScores = new HashMap&lt;String, Integer&gt;();</span>
+
+<span class="fc" id="L42">    int turnManagerINT = 0;</span>
+<span class="fc" id="L43">    int stageManagerINT = 0;</span>
+
+<span class="fc" id="L45">    ArrayList&lt;Projectile&gt; projectiles = new ArrayList&lt;Projectile&gt;();</span>
+<span class="fc" id="L46">    public int Wind = random.nextInt(71) - 35;</span>
+
+    String trees;
+    public PImage treepic;
+    public PImage fuelIMG;
+    public PImage Wind1;
+    public PImage Wind2;
+    player previousPlayer;
+
+    public static PImage parachuteIMG;
+    protected int R;
+    protected int G;
+    protected int B;
+
+    public static final int INITIAL_PARACHUTES = 1;
+
+    public static final int FPS = 30;
+
+    public String configPath;
+    public String backgroundImage;
+    String foregroundColour;
+    String layout;
+
+<span class="fc" id="L69">    public static Random random = new Random();</span>
+	
+	// Feel free to add any additional methods or attributes you want. Please put classes in different files.
+
+<span class="fc" id="L73">    public App() {</span>
+<span class="fc" id="L74">        this.configPath = &quot;config.json&quot;;</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Initialise the setting of the window size.
+     */
+	@Override
+    public void settings() {
+<span class="fc" id="L82">        size(WIDTH, HEIGHT);</span>
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * Load all resources such as images. Initialise the elements such as the player, enemies and map elements.
+     */
+	@Override
+    public void setup() {
+<span class="fc" id="L90">        frameRate(FPS);</span>
+<span class="fc" id="L91">        JSONObject json = loadJSONObject(configPath);</span>
+
+<span class="fc" id="L93">        JSONArray level = json.getJSONArray(&quot;levels&quot;);</span>
+<span class="fc" id="L94">        JSONObject current = level.getJSONObject(stageManagerINT);</span>
+<span class="fc" id="L95">        layout = current.getString(&quot;layout&quot;);</span>
+<span class="fc" id="L96">        backgroundImage = current.getString(&quot;background&quot;);</span>
+<span class="fc" id="L97">        String[] foregroundColour = current.getString(&quot;foreground-colour&quot;).split(&quot;,&quot;);</span>
+<span class="fc" id="L98">        System.out.println(Arrays.toString(foregroundColour));</span>
+<span class="fc" id="L99">        R = Integer.parseInt(foregroundColour[0]);</span>
+<span class="fc" id="L100">        G = Integer.parseInt(foregroundColour[1]);</span>
+<span class="fc" id="L101">        B = Integer.parseInt(foregroundColour[2]);</span>
+<span class="fc" id="L102">        JSONObject playerColoursJson = json.getJSONObject(&quot;player_colours&quot;);</span>
+<span class="fc" id="L103">        String[] playerTypes = {&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;};</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        for (String type : playerTypes) {</span>
+            // Check if the type exists in the JSON
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">            if (playerColoursJson.hasKey(type)) {</span>
+<span class="fc" id="L107">                String colorStr = playerColoursJson.getString(type);</span>
+<span class="fc" id="L108">                String[] colorComponents = colorStr.split(&quot;,&quot;);</span>
+<span class="fc" id="L109">                int[] colorValues = new int[colorComponents.length];</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">                for (int k = 0; k &lt; colorComponents.length; k++) {</span>
+<span class="fc" id="L111">                    colorValues[k] = Integer.parseInt(colorComponents[k]);</span>
+                }
+<span class="fc" id="L113">                playerColorValues.put(type, colorValues);</span>
+            }
+        }
+
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if(current.hasKey(&quot;trees&quot;)){</span>
+<span class="fc" id="L118">            treepic = loadImage(current.getString(&quot;trees&quot;));</span>
+        }
+        else{
+<span class="nc" id="L121">            trees = null;</span>
+        }
+
+<span class="fc" id="L124">        parachuteIMG  = loadImage(&quot;src/main/resources/Tanks/parachute.png&quot;);</span>
+<span class="fc" id="L125">        fuelIMG = loadImage(&quot;src/main/resources/Tanks/fuel.png&quot;);</span>
+<span class="fc" id="L126">        Wind1 = loadImage(&quot;src/main/resources/Tanks/wind.png&quot;);</span>
+<span class="fc" id="L127">        Wind2 = loadImage(&quot;src/main/resources/Tanks/wind-1.png&quot;);</span>
+
+        try{ 
+<span class="fc" id="L130">			BufferedReader reader = new BufferedReader(new FileReader(layout));</span>
+<span class="fc" id="L131">            int i =0; </span>
+            while (true){
+<span class="fc" id="L133">                String line = reader.readLine();</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">                if (line == null){</span>
+<span class="fc" id="L135">                    break;</span>
+                }
+<span class="fc" id="L137">                String[] line_sep = line.split(&quot;&quot;);</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">                for (int j = 0; j &lt; line_sep.length; j++){</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">                    if (line_sep[j].equals(&quot;X&quot;)){</span>
+<span class="fc" id="L140">                        board[i][j] = 1;</span>
+                    }
+<span class="fc bfc" id="L142" title="All 2 branches covered.">                    else if (line_sep[j].equals(&quot;T&quot;)){</span>
+<span class="fc" id="L143">                        treesLs.add(j*CELLSIZE);</span>
+                    }
+<span class="pc bpc" id="L145" title="1 of 10 branches missed.">                    else if ((line_sep[j].equals(&quot;A&quot;)) || line_sep[j].equals(&quot;B&quot;) || line_sep[j].equals(&quot;C&quot;) || line_sep[j].equals(&quot;D&quot;) || line_sep[j].equals(&quot;E&quot;)){ //((line_sep[j].equals(&quot;A&quot;)) || line_sep[j].equals(&quot;B&quot;) || line_sep[j].equals(&quot;C&quot;) || line_sep[j].equals(&quot;D&quot;))</span>
+                        /*playerLs.add(new player(new PVector(j*10, i), &quot;A&quot;));
+                        System.out.println(playerLs.get(lame).coordinates);
+                        lame++;*/
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                        if (line_sep[j].equals(&quot;A&quot;)){</span>
+<span class="fc" id="L150">                            playerLs.put(&quot;A&quot;,j*CELLSIZE);</span>
+                        }
+<span class="fc bfc" id="L152" title="All 2 branches covered.">                        else if (line_sep[j].equals(&quot;B&quot;)){</span>
+<span class="fc" id="L153">                            playerLs.put(&quot;B&quot;,j*CELLSIZE);</span>
+                        }
+<span class="fc bfc" id="L155" title="All 2 branches covered.">                        else if (line_sep[j].equals(&quot;C&quot;)){   </span>
+<span class="fc" id="L156">                            playerLs.put(&quot;C&quot;,j*CELLSIZE);</span>
+                        }
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">                        else if (line_sep[j].equals(&quot;D&quot;)){  </span>
+<span class="fc" id="L159">                            playerLs.put(&quot;D&quot;,j*CELLSIZE);</span>
+                        }
+<span class="nc bnc" id="L161" title="All 2 branches missed.">                        else if (line_sep[j].equals(&quot;E&quot;)){  </span>
+<span class="nc" id="L162">                            playerLs.put(&quot;E&quot;,j*CELLSIZE);</span>
+                        }
+                    }
+                }
+<span class="fc" id="L166">                i++;</span>
+<span class="fc" id="L167">            }</span>
+
+<span class="fc bfc" id="L169" title="All 2 branches covered.">            for (int s = 0; s &lt; board.length; s++){</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">                for (int t = 0; t &lt; board[0].length; t++){</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">                    if (board[t][s] == 1){</span>
+                        /*for (float n = 0; n &lt;= 1; n+=0.1f){
+                            test.add(new PVector(s + n, t));
+                        }*/
+<span class="fc bfc" id="L175" title="All 2 branches covered.">                        for (int b =0; b &lt; 32; b++){</span>
+<span class="fc" id="L176">                            terrainHeightsInitial.add(t*CELLSIZE);</span>
+                            //Terrain.widths.add((s + b));
+                        }
+                    }
+                }
+            }
+
+<span class="fc" id="L183">            Map&lt;String, Integer&gt; sortedMap = new TreeMap&lt;&gt;(playerLs);</span>
+            
+<span class="fc" id="L185">            ArrayList&lt;Integer&gt; sortedplayer = new ArrayList&lt;Integer&gt;();</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">            for (int k = 0; k &lt; sortedMap.size(); k++){</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">                if (k == 0){</span>
+<span class="fc" id="L188">                    String srt = &quot;A&quot;;</span>
+<span class="fc" id="L189">                    sortedplayer.add(sortedMap.get(srt));</span>
+<span class="fc" id="L190">                }</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">                else if (k == 1){</span>
+<span class="fc" id="L192">                    String srt = &quot;B&quot;;</span>
+<span class="fc" id="L193">                    sortedplayer.add(sortedMap.get(srt));</span>
+<span class="fc" id="L194">                }</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">                else if (k == 2){</span>
+<span class="fc" id="L196">                    String srt = &quot;C&quot;;</span>
+<span class="fc" id="L197">                    sortedplayer.add(sortedMap.get(srt));</span>
+<span class="fc" id="L198">                }</span>
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">                else if (k == 3){</span>
+<span class="fc" id="L200">                    String srt = &quot;D&quot;;</span>
+<span class="fc" id="L201">                    sortedplayer.add(sortedMap.get(srt));</span>
+<span class="fc" id="L202">                }</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">                else if (k == 4){</span>
+<span class="nc" id="L204">                    String srt = &quot;E&quot;;</span>
+<span class="nc" id="L205">                    sortedplayer.add(sortedMap.get(srt));</span>
+                }
+            }
+
+<span class="fc" id="L209">            terrain = new Terrain(treesLs, treepic, sortedplayer, terrainHeightsInitial);</span>
+            
+<span class="fc" id="L211">            terrain.smoothArray();</span>
+
+            /*for (int j = 0; j &lt; terrain.terrainCoordinates.size(); j++){
+                explosiveCoords.put(terrain.terrainCoordinates.get(j).x*CELLSIZE, terrain.terrainCoordinates.get(j).y*CELLSIZE);
+            }*/
+            
+
+<span class="fc" id="L218">            int[] coordsX = terrain.getPlayerCoordsX();</span>
+<span class="fc" id="L219">            float[] coordsY = terrain.getPlayerCoordsY();</span>
+
+<span class="fc bfc" id="L221" title="All 2 branches covered.">            for (int s =0; s &lt; coordsY.length; s++){</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">                if (s == 0){</span>
+<span class="fc" id="L223">                    String srt = &quot;A&quot;;</span>
+<span class="fc" id="L224">                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));</span>
+<span class="fc" id="L225">                }</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">                else if (s == 1){</span>
+<span class="fc" id="L227">                    String srt = &quot;B&quot;;</span>
+<span class="fc" id="L228">                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));</span>
+<span class="fc" id="L229">                }</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">                else if (s == 2){</span>
+<span class="fc" id="L231">                    String srt = &quot;C&quot;;</span>
+<span class="fc" id="L232">                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));</span>
+<span class="fc" id="L233">                }</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">                else if (s == 3){</span>
+<span class="fc" id="L235">                    String srt = &quot;D&quot;;</span>
+<span class="fc" id="L236">                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));</span>
+<span class="fc" id="L237">                }</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">                else if (s == 4){</span>
+<span class="nc" id="L239">                    String srt = &quot;E&quot;;</span>
+<span class="nc" id="L240">                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));</span>
+                }
+                //System.out.println(coordsX[s] + &quot; &quot; + coordsY[s] + &quot; &quot; + playingOnBoard.get(s).type);
+            }
+
+<span class="fc" id="L245">            CurrentPlayer = playingOnBoard.get(0);</span>
+
+<span class="fc" id="L247">            reader.close();</span>
+
+            }
+<span class="nc" id="L250">            catch(FileNotFoundException e){</span>
+<span class="nc" id="L251">                e.printStackTrace();</span>
+            }
+<span class="nc" id="L253">            catch(IOException e){</span>
+<span class="nc" id="L254">                e.printStackTrace();</span>
+<span class="pc" id="L255">            }</span>
+
+<span class="fc" id="L257">    }</span>
+
+    public void restartGame(){
+<span class="nc bnc" id="L260" title="All 2 branches missed.">        for (int i = 0; i &lt; playingOnBoard.size(); i++){</span>
+<span class="nc" id="L261">            pastPlayerScores.put(playingOnBoard.get(i).type, playingOnBoard.get(i).score);</span>
+        }
+<span class="nc" id="L263">        System.out.println(pastPlayerScores.toString());</span>
+<span class="nc" id="L264">        noLoop();</span>
+<span class="nc" id="L265">        stageManagerINT = (stageManagerINT + 1)%3;</span>
+<span class="nc" id="L266">        turnManagerINT = 0;</span>
+<span class="nc" id="L267">        board = new int[32][32];</span>
+<span class="nc" id="L268">        treesLs = new ArrayList&lt;Integer&gt;();</span>
+<span class="nc" id="L269">        terrain.heights = new ArrayList&lt;Integer&gt;();</span>
+<span class="nc" id="L270">        playingOnBoard = new ArrayList&lt;player&gt;();</span>
+<span class="nc" id="L271">        setup();</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">        for (int i = 0; i &lt; playingOnBoard.size(); i++){</span>
+<span class="nc" id="L273">            playingOnBoard.get(i).score = pastPlayerScores.get(playingOnBoard.get(i).type);</span>
+        }
+<span class="nc" id="L275">        loop();</span>
+<span class="nc" id="L276">    }</span>
+
+    public void manageTurns(int n){
+<span class="fc" id="L279">        CurrentPlayer = playingOnBoard.get(n%(playingOnBoard.size())); </span>
+<span class="fc" id="L280">    }</span>
+
+    /**
+     * Receive key pressed signal from the keyboard.
+     */
+	@Override
+    public void keyPressed(KeyEvent event){
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">        if (key == ' '){</span>
+<span class="nc" id="L288">            Projectile projToBeAdded = new Projectile(CurrentPlayer.turretCoord.x - 15, CurrentPlayer.turretCoord.y, CurrentPlayer.power, CurrentPlayer.turretAngle, CurrentPlayer.color, CurrentPlayer);</span>
+<span class="nc" id="L289">            Wind += projToBeAdded.getWind();</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">            if (Wind &gt; 35){</span>
+<span class="nc" id="L291">                Wind = 35;</span>
+            }
+<span class="nc bnc" id="L293" title="All 2 branches missed.">            else if (Wind &lt; -35){</span>
+<span class="nc" id="L294">                Wind = -35;</span>
+            }
+<span class="nc" id="L296">            projectiles.add(projToBeAdded);</span>
+<span class="nc" id="L297">            turnManagerINT++;</span>
+<span class="nc" id="L298">            manageTurns(turnManagerINT);</span>
+        }
+<span class="pc bpc" id="L300" title="1 of 2 branches missed.">        if (key == CODED) {</span>
+<span class="nc bnc" id="L301" title="All 4 branches missed.">            if ((keyCode == LEFT) &amp;&amp; (CurrentPlayer.x - 3 &gt; 3)){ // terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f</span>
+<span class="nc" id="L302">                CurrentPlayer.move(CurrentPlayer.x - 3, Terrain.terrainForExplosion.get(CurrentPlayer.x - 3) - 3); // </span>
+<span class="nc" id="L303">                terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 1);</span>
+<span class="nc" id="L304">                CurrentPlayer.draw(this);</span>
+            } 
+<span class="nc bnc" id="L306" title="All 4 branches missed.">            else if ((keyCode == RIGHT) &amp;&amp;(CurrentPlayer.x + 3 &lt; WIDTH - 3)){</span>
+<span class="nc" id="L307">                CurrentPlayer.move(CurrentPlayer.x + 3, Terrain.terrainForExplosion.get(CurrentPlayer.x + 3) - 3); // , terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f</span>
+<span class="nc" id="L308">                terrain.players.set(turnManagerINT%(playingOnBoard.size()), terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 1);</span>
+<span class="nc" id="L309">                CurrentPlayer.draw(this);</span>
+            }
+<span class="nc bnc" id="L311" title="All 4 branches missed.">            if ((keyCode == UP) &amp;&amp; (CurrentPlayer.turretAngle &gt; Math.toRadians(0))){</span>
+<span class="nc" id="L312">                CurrentPlayer.turretAngle -= 0.1f;</span>
+<span class="nc" id="L313">                float changeX = ((CurrentPlayer.x + (CurrentPlayer.x + CELLSIZE))/2) + (float)((15)*((Math.cos(CurrentPlayer.turretAngle))));</span>
+<span class="nc" id="L314">                float changeY = CurrentPlayer.y - (float)((15)*((Math.sin(CurrentPlayer.turretAngle))));</span>
+<span class="nc" id="L315">                CurrentPlayer.moveTurret(changeX, changeY);</span>
+<span class="nc bnc" id="L316" title="All 4 branches missed.">            } else if ((keyCode == DOWN)  &amp;&amp; (CurrentPlayer.turretAngle &lt;= Math.toRadians(180))){</span>
+<span class="nc" id="L317">                CurrentPlayer.turretAngle += 0.1f;</span>
+<span class="nc" id="L318">                float changeX = ((CurrentPlayer.x + (CurrentPlayer.x + CELLSIZE))/2) + (float)((15)*((Math.cos(CurrentPlayer.turretAngle))));</span>
+<span class="nc" id="L319">                float changeY = CurrentPlayer.y - (float)((15)*((Math.sin(CurrentPlayer.turretAngle))));</span>
+<span class="nc" id="L320">                CurrentPlayer.moveTurret(changeX, changeY);</span>
+                //float changeX = ((CurrentPlayer.x + (CurrentPlayer.x + 1))/2 - (2/CELLSIZE)) + (float)((0.45)*((Math.cos(CurrentPlayer.turretAngle - Math.toRadians(3)))));
+                //float changeY =  CurrentPlayer.y - (float)((0.45)*((Math.sin(CurrentPlayer.turretAngle - Math.toRadians(3)))));
+                //CurrentPlayer.moveTurret(changeX, changeY);
+            }
+        }
+<span class="pc bpc" id="L326" title="2 of 4 branches missed.">        if (key == 'W' || key == 'w') {</span>
+<span class="nc" id="L327">            CurrentPlayer.power += 36/FPS;</span>
+        }
+<span class="pc bpc" id="L329" title="2 of 4 branches missed.">        if (key == 'S' || key == 's') {</span>
+<span class="nc" id="L330">            CurrentPlayer.power -= 36/FPS;</span>
+        }
+<span class="pc bpc" id="L332" title="2 of 4 branches missed.">        if (key == 'R' || key == 'r') {</span>
+<span class="nc" id="L333">            restartGame();</span>
+        }
+<span class="fc" id="L335">    }</span>
+
+    /**
+     * Receive key released signal from the keyboard.
+     */
+	@Override
+    public void keyReleased(){
+        
+<span class="nc" id="L343">    }</span>
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        //TODO - powerups, like repair and extra fuel and teleport? - or maybe leave this as an extension
+
+
+<span class="nc" id="L350">    }</span>
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+<span class="nc" id="L355">    }</span>
+
+    /**
+     * Draw all elements in the game by current frame.
+     */
+	@Override
+    public void draw() {
+        
+
+        //----------------------------------
+        //display HUD:
+        //----------------------------------
+        //TODO
+
+        //----------------------------------
+        //display scoreboard:
+        //----------------------------------
+        //TODO
+        
+		//----------------------------------
+        //----------------------------------
+
+        //TODO: Check user action
+
+        //background(255);
+<span class="fc" id="L380">        image(loadImage(backgroundImage), 0, 0, WIDTH, HEIGHT);</span>
+
+<span class="fc" id="L382">        fill(R, G, B);</span>
+<span class="fc" id="L383">        terrain.draw(this);</span>
+
+<span class="fc" id="L385">        terrain.drawTrees(this);</span>
+
+<span class="fc" id="L387">        HUD.displayTEXTS(this);</span>
+<span class="fc" id="L388">        HUD.displayHealthBar(this);</span>
+<span class="fc" id="L389">        HUD.displayScoreBoard(this);</span>
+        
+        //HUD.display(this);
+
+<span class="pc bpc" id="L393" title="1 of 2 branches missed.">        if (playingOnBoard.size() == 1){</span>
+<span class="nc" id="L394">            restartGame();</span>
+        }
+
+<span class="fc bfc" id="L397" title="All 2 branches covered.">        for (int i =0; i &lt; playingOnBoard.size(); i++){</span>
+<span class="fc" id="L398">            player current = playingOnBoard.get(i);</span>
+<span class="fc" id="L399">            current.draw(this);</span>
+<span class="fc bfc" id="L400" title="All 2 branches covered.">            if (current == CurrentPlayer){</span>
+<span class="fc" id="L401">                current.drawLine(this);</span>
+            }
+        }
+
+<span class="pc bpc" id="L405" title="1 of 2 branches missed.">        for (int s = 0; s &lt; projectiles.size(); s++){</span>
+<span class="nc" id="L406">            Projectile proj = projectiles.get(s);</span>
+<span class="nc" id="L407">            proj.update();</span>
+<span class="nc" id="L408">            proj.display(this);</span>
+            //System.out.println(&quot;Projectile of: &quot; + proj.PlayerThatFired.type);
+            //System.out.println(explosiveCoords.get(proj.x));
+            try{
+<span class="nc bnc" id="L412" title="All 2 branches missed.">                if (proj.y &gt;= Terrain.terrainForExplosion.get((int) proj.x)) {</span>
+<span class="nc" id="L413">                    explosion.alterTerrain(this, proj);</span>
+<span class="nc" id="L414">                    noStroke();</span>
+<span class="nc" id="L415">                    explosion.drawExplosion(this, proj.x, proj.y);</span>
+<span class="nc" id="L416">                    explosion.checkPlayerCollisions(this, proj);</span>
+<span class="nc" id="L417">                    projectiles.remove(s);</span>
+                }
+            }
+<span class="nc" id="L420">            catch(IndexOutOfBoundsException e){</span>
+<span class="nc" id="L421">                projectiles.remove(s);</span>
+<span class="nc" id="L422">            }</span>
+        }
+<span class="fc" id="L424">    }</span>
+
+    public void displayEndGame(){
+<span class="nc" id="L427">        background(255);</span>
+<span class="nc" id="L428">        fill(0);</span>
+<span class="nc" id="L429">        textSize(16);</span>
+<span class="nc" id="L430">        text(&quot;GAME OVER&quot;, WIDTH/2, HEIGHT/2);</span>
+<span class="nc" id="L431">        noLoop();</span>
+<span class="nc" id="L432">    }</span>
+
+
+    public static void main(String[] args) {
+<span class="nc" id="L436">        PApplet.main(&quot;Tanks.App&quot;);</span>
+<span class="nc" id="L437">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

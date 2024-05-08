@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>player.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tanks</a> &gt; <a href="index.source.html" class="el_package">Tanks</a> &gt; <span class="el_source">player.java</span></div><h1>player.java</h1><pre class="source lang-java linenums">package Tanks;
+import processing.core.PApplet;
+import processing.core.PVector;
+
+public class player extends App{
+    //public PVector coordinates;
+    public float y;
+    public int x;
+    public String type; 
+    public PVector turretCoord;
+<span class="fc" id="L11">    public float turretAngle = (float) Math.toRadians(90);</span>
+    public int[] color;
+    public int health;
+    public int power;
+    public int score;
+<span class="fc" id="L16">    public int parachutesLeft= 3;</span>
+<span class="fc" id="L17">    public boolean parachute_used = false;</span>
+    public boolean isHit;
+    public int fuel;
+    public boolean noTerrainBelow;
+
+<span class="fc" id="L22">    public player(int x, float y, String typ, int[] color){ //, PVector coordinateL, PVector coordinateR</span>
+<span class="fc" id="L23">        this.x = x;</span>
+<span class="fc" id="L24">        this.y = y;</span>
+<span class="fc" id="L25">        this.type = typ;</span>
+<span class="fc" id="L26">        this.turretCoord = new PVector((this.x + (this.x + CELLSIZE))/2, (this.y - 15));</span>
+<span class="fc" id="L27">        this.color = color;</span>
+<span class="fc" id="L28">        this.health = 100;</span>
+<span class="fc" id="L29">        this.score = 0;</span>
+<span class="fc" id="L30">        this.power = 50;</span>
+<span class="fc" id="L31">        this.fuel = 250;</span>
+<span class="fc" id="L32">    }</span>
+
+    public void draw(PApplet app){
+        // if (noTerrainBelow){
+        //     if (this.y ==  Terrain.terrainForExplosion.get(this.x)){
+        //         noTerrainBelow = false;
+        //     }
+        //     this.turretCoord.y+=0.5;
+        //     this.y += 0.5;
+        // }
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if (isHit) {</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">            if (this.y &gt; Terrain.terrainForExplosion.get(this.x) - 10) {</span>
+<span class="nc" id="L44">                isHit = false;</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">                if(this.parachute_used){</span>
+<span class="nc" id="L46">                    this.parachutesLeft--;</span>
+<span class="nc" id="L47">                    this.parachute_used = false;</span>
+                }
+            }
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            if (this.parachutesLeft &gt; 0){</span>
+<span class="nc" id="L51">                app.image(parachuteIMG, (float)this.x - 14, this.y-CELLSIZE, CELLSIZE, CELLSIZE);</span>
+<span class="nc" id="L52">                this.turretCoord.y+=0.5;</span>
+<span class="nc" id="L53">                this.y += 0.5;</span>
+<span class="nc" id="L54">                this.parachute_used = true;</span>
+            }
+            else{
+<span class="nc" id="L57">                this.turretCoord.y += 2;</span>
+<span class="nc" id="L58">                this.y += 2;</span>
+<span class="nc" id="L59">                this.health -= 1;</span>
+            }
+        }
+<span class="fc" id="L62">        app.noStroke();</span>
+<span class="fc" id="L63">        app.fill(this.color[0], this.color[1], this.color[2]);</span>
+<span class="fc" id="L64">        app.rect((this.x-9) + 2, (this.y), 16, 6, 10);</span>
+<span class="fc" id="L65">        app.fill(this.color[0], this.color[1], this.color[2]);</span>
+<span class="fc" id="L66">        app.rect((this.x-9), (this.y + 3), 21, 6, 10);</span>
+<span class="fc" id="L67">        app.stroke(0);</span>
+<span class="fc" id="L68">        app.strokeWeight(4);</span>
+        //app.line(this.x, this.y, this.x, this.y - 10);
+<span class="fc" id="L70">        app.line((this.x + (this.x + CELLSIZE))/2  - 15, this.y, this.turretCoord.x-15, turretCoord.y);</span>
+<span class="fc" id="L71">        app.noStroke();</span>
+<span class="fc" id="L72">    }</span>
+
+    public void drawLine(PApplet app){
+<span class="fc" id="L75">        app.stroke(0);</span>
+<span class="fc" id="L76">        app.strokeWeight(2);</span>
+
+        //app.translate(this.x*CELLSIZE + 2, (this.y)*CELLSIZE);
+<span class="fc" id="L79">        app.line(this.x, (this.y) - 100, this.x, (this.y) - 45);</span>
+        
+<span class="fc" id="L81">        app.line(this.x - 12, (this.y) - 65, this.x, (this.y) - 45);</span>
+<span class="fc" id="L82">        app.line(this.x + 12, (this.y) - 65, this.x, (this.y) - 45);</span>
+<span class="fc" id="L83">        app.noStroke();</span>
+<span class="fc" id="L84">    }</span>
+
+    public void move(int changedX, float changedY){
+        /*int changedX;
+        int changedY;
+        if (direction == 'L') {
+            changedX = -1;
+        }*/
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (fuel&gt;0){</span>
+<span class="nc" id="L93">            int changeForTurretX = this.x - changedX;</span>
+<span class="nc" id="L94">            float changeForTurretY = this.y - changedY;</span>
+<span class="nc" id="L95">            this.x = changedX;</span>
+<span class="nc" id="L96">            this.y = changedY;</span>
+<span class="nc" id="L97">            this.turretCoord = new PVector(this.turretCoord.x - changeForTurretX, this.turretCoord.y - changeForTurretY);</span>
+<span class="nc" id="L98">            fuel--;</span>
+        }
+<span class="nc" id="L100">    }</span>
+
+    public void moveTurret(float changedX, float changedY){
+<span class="nc" id="L103">        this.turretCoord.x = changedX;</span>
+<span class="nc" id="L104">        this.turretCoord.y = changedY;</span>
+<span class="nc" id="L105">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
