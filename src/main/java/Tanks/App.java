@@ -196,7 +196,7 @@ public class App extends PApplet {
                     sortedplayer.add(sortedMap.get(key));
                 }
             }
-
+            // System.out.println(terrainHeightsInitial);
             terrain = new Terrain(treesLs, treepic, sortedplayer, terrainHeightsInitial);
             
             terrain.smoothArray();
@@ -349,13 +349,13 @@ public class App extends PApplet {
                 CurrentPlayer.score -= 10;
             }
         }
-        if (key == 'y' || key == 'Y') {
-            // for (int i = 65; i < 65 + pastPlayerScores.size(); i++){
+        // if (key == 'y' || key == 'Y') {
+        //     // for (int i = 65; i < 65 + pastPlayerScores.size(); i++){
 
-            // }
-            sortPlayers(backupForEndGame);
-            isgameOver = true;
-        }
+        //     // }
+        //     sortPlayers(backupForEndGame);
+        //     isgameOver = true;
+        // }
         if (key == 'R' || key == 'r') {
             if (isgameOver){
                 stageManagerINT = 0;
@@ -482,6 +482,7 @@ public class App extends PApplet {
                 proj.display(this);
                 //System.out.println("Projectile of: " + proj.PlayerThatFired.type);
                 //System.out.println(explosiveCoords.get(proj.x));
+                //System.out.println(proj.PlayerThatFired.turretCoord);
                 try{
                     if (proj.y >= Terrain.terrainForExplosion.get((int) proj.x)) {
                         explosion.alterTerrain(this, proj);
