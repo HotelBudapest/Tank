@@ -22,25 +22,46 @@ public class SampleTest {
 
     @Test
     void testAppMinimalStart() {
-        App app = new App();
-        PApplet.runSketch(new String[] { "Tanks" }, app);
-        app.delay(2000);
-        app.setup();
-        app.delay(5000);
+        App app1 = new App();
         
-        assertNotNull(app);
+        app1.delay(1000);
+        PApplet.runSketch(new String[] { "Tanks" }, app1);
+        app1.delay(2000);
+        app1.setup();
+        app1.delay(2000);
+        
+        assertNotNull(app1);
+
+        app1.delay(1000);
+        
+        App app2 = new App();
+
+        app1.delay(1000);
+        PApplet.runSketch(new String[] { "Tanks" }, app2);
+        app2.delay(2000);
+        app2.testing = true;
+        app2.setup();
+        app2.delay(2000);
+        app2.draw();
+        
+        assertNotNull(app2);
+
+        app2.delay(1000);
     }
 
     @Test
     void testTerrainNotNull() {
         App app = new App();
+        
+        app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(2000);
         app.setup();
         app.delay(5000);
         
         assertNotNull(app.terrain, "Terrain should not be null after app initialization.");
-        // app.dispose();
+        
+        app.delay(1000);
     }
 
     @Test
@@ -51,6 +72,8 @@ public class SampleTest {
         app.setup();
         app.delay(5000);
         assertNotNull(app.playingOnBoard, "Player list should not be null.");
+        
+        app.delay(1000);
     }
 
     @Test
@@ -62,12 +85,14 @@ public class SampleTest {
         app.delay(5000);
         assertNotNull(app.CurrentPlayer, "Current player should not be null.");
         assertEquals(app.CurrentPlayer, app.playingOnBoard.get(0), "Current player should match the one at the turn manager index.");
-        app.dispose();
+        
+        app.delay(1000);
     }
 
     @Test
     void changingPlayers(){
         App app = new App();
+        app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(2000);
         app.setup();
@@ -76,26 +101,34 @@ public class SampleTest {
         app.manageTurns(1);
         app.delay(2000);
         assertNotEquals(app.CurrentPlayer, app.playingOnBoard.get(0), "Current player should change after managing turns.");
+        
+        app.delay(1000);
     }
 
     @Test
     void testDraw(){
         App app = new App();
+        app.delay(2000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(2000);
         app.setup();
-        app.delay(5000);
+        app.delay(2000);
         assertDoesNotThrow(() ->  {
+            app.delay(1000);
             app.draw();});
+            
+        app.delay(1000);
     }
+    
 
     @Test
     void ProjectileFired(){
         App app = new App();
+        app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(2000);
         app.setup();
-        app.delay(5000);
+        app.delay(2000);
         
         app.delay(2000);
         app.turnManagerINT = 0;
@@ -111,18 +144,19 @@ public class SampleTest {
         
         app.key = ' ';
         app.keyPressed(null); 
-        app.delay(5000);
+        app.delay(2000);
         player newPlayer = app.CurrentPlayer;
-        System.out.println(app.CurrentPlayer);
 
+        app.delay(1000);
         assertEquals(expectedPlayer, newPlayer ,"Current player should change after space bar press.");
-        // app.dispose();
+        app.delay(1000);
     }
 
 
     @Test
     void projectileFiredOutOFBound(){
         App app = new App();
+        app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(2000);
         app.setup();
@@ -145,21 +179,25 @@ public class SampleTest {
 
         app.key = ' ';
         app.keyPressed(null); 
-        app.delay(5000);
+        app.delay(2000);
         player newPlayer = app.CurrentPlayer;
         System.out.println(app.CurrentPlayer);
 
         assertEquals(expectedPlayer, newPlayer ,"Current player should change after space bar press.");
-        // app.dispose();
+        
+        app.delay(1000);
     }
 
     @Test
     void MoveRight(){
         App app = new App();
+        app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
+        app.delay(1000);
+        app.playingOnBoard = new ArrayList<player>();
         app.delay(2000);
         app.setup();
-        app.delay(5000);
+        app.delay(3000);
 
         int initialPlayer = app.CurrentPlayer.x;
         //KeyEvent event = new KeyEvent(this, KeyEvent.PRESS, System.currentTimeMillis(), 0, keyCode.get(39), PConstants.CODED);       
@@ -170,15 +208,45 @@ public class SampleTest {
         int newPlayer = app.CurrentPlayer.x;
         app.delay(1000);
         assertEquals(initialPlayer + 3, newPlayer, "Current player should change after space bar press.");
+        
+        app.delay(1000);
+
+        initialPlayer = app.CurrentPlayer.x;
+        app.delay(1000);
+        app.CurrentPlayer.fuel = 0;
+        app.keyPressed(null); 
+        app.delay(2000);
+        newPlayer = app.CurrentPlayer.x;
+
+        assertEquals(initialPlayer, newPlayer, "Current player should change after space bar press.");
+
+        app.delay(1000);
+
+        app.CurrentPlayer.fuel = 100;
+        app.CurrentPlayer.x = App.WIDTH - 6; 
+        app.CurrentPlayer.y = Terrain.terrainForExplosion.get(app.CurrentPlayer.x);
+        app.CurrentPlayer.turretCoord = new PVector(app.CurrentPlayer.x, app.CurrentPlayer.y - 15);
+        int initialPlayerPosition = app.CurrentPlayer.x;
+        app.delay(1000);
+        app.keyPressed(null); 
+        app.delay(2000);
+        int newPlayerPosition = app.CurrentPlayer.x;
+        app.delay(1000);
+        assertEquals(initialPlayerPosition, newPlayerPosition, "Current player should change after space bar press.");
+        app.delay(1000);
     }
 
     @Test
     void moveLeft(){
         App app = new App();
+        
+        app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
+        app.delay(1000);
+        app.playingOnBoard = new ArrayList<player>();
         app.delay(2000);
         app.setup();
-        app.delay(5000);
+        app.delay(3000);
 
         int initialPlayer = app.CurrentPlayer.x;
         //KeyEvent event = new KeyEvent(this, KeyEvent.PRESS, System.currentTimeMillis(), 0, keyCode.get(39), PConstants.CODED);       
@@ -189,15 +257,69 @@ public class SampleTest {
         int newPlayer = app.CurrentPlayer.x;
         app.delay(1000);
         assertEquals(initialPlayer - 3, newPlayer, "Current player should change after space bar press.");
+        app.delay(1000);
+
+        app.CurrentPlayer.x = 6; 
+        app.CurrentPlayer.y = Terrain.terrainForExplosion.get(app.CurrentPlayer.x);
+        app.CurrentPlayer.turretCoord = new PVector(app.CurrentPlayer.x, app.CurrentPlayer.y - 15);
+        int initialPlayerPosition = app.CurrentPlayer.x;
+        app.delay(1000);
+        app.keyPressed(null); 
+        app.delay(2000);
+        int newPlayerPosition = app.CurrentPlayer.x;
+        app.delay(1000);
+        assertEquals(initialPlayerPosition, newPlayerPosition, "Current player should change after space bar press.");
+        app.delay(1000);
+
     }
 
     @Test
     void testPowerUps(){
         App app = new App();
+        app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(2000);
         app.setup();
-        app.delay(5000);
+        app.delay(3000);
+
+
+        app.delay(2000);
+        app.key = 'P';
+        app.keyPressed(null); 
+
+        app.delay(1000);
+        
+        assertEquals(3, app.CurrentPlayer.parachutesLeft);
+        
+        app.delay(1000);
+
+        app.key = 'F';
+        app.keyPressed(null); 
+        app.delay(1000);
+
+        assertEquals(250, app.CurrentPlayer.fuel);
+
+        app.delay(1000);
+
+        app.key = 'R';
+        app.keyPressed(null); 
+        app.delay(1000);
+        
+        assertEquals(100, app.CurrentPlayer.health);
+
+        app.delay(1000);
+
+        app.key = 'H';
+        app.keyPressed(null); 
+        app.delay(1000);
+
+        app.delay(1000);
+        
+        assertEquals(0, app.CurrentPlayer.shield);
+        
+        app.delay(1000);
+
+        //////////////////////////
 
         app.CurrentPlayer.score = 200;
         app.delay(2000);
@@ -242,18 +364,19 @@ public class SampleTest {
 
         assertEquals(1, app.CurrentPlayer.shield);
 
+        app.delay(1000);
     }
 
     @Test
     void moveRighGameOver(){
-        App app = new App();        
+        App app = new App();
         app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(1000);
         app.playingOnBoard = new ArrayList<player>();
         app.delay(2000);
         app.setup();
-        app.delay(5000);
+        app.delay(3000);
 
         int initialPlayer = app.CurrentPlayer.x;
         app.key = App.CODED;
@@ -265,6 +388,8 @@ public class SampleTest {
         int newPlayer = app.CurrentPlayer.x;
         app.delay(1000);
         assertNotEquals(initialPlayer + 3, newPlayer, "Current player should change after space bar press.");
+        
+        app.delay(1000);
     }
 
     @Test
@@ -277,7 +402,7 @@ public class SampleTest {
         app.playingOnBoard = new ArrayList<player>();
         app.delay(2000);
         app.setup();
-        app.delay(5000);
+        app.delay(3000);
 
         app.stageManagerINT++;
         
@@ -290,18 +415,91 @@ public class SampleTest {
         app.delay(2000);
 
         assertEquals(0, app.stageManagerINT);
+        
+        app.delay(1000);
     }
 
     @Test
-    void testCombat(){
+    void testTurretExtremes(){
+        App app = new App();        
+        app.delay(2000);
+        PApplet.runSketch(new String[] { "Tanks" }, app);
+        app.delay(2000);
+        app.playingOnBoard = new ArrayList<player>();
+        app.delay(2000);
+        app.setup();
+        app.delay(3000);
+
+        app.CurrentPlayer.turretAngle = 0;
+        app.delay(1000);
+        app.key = App.CODED;
+        app.key = App.UP;
+        app.delay(1000);
+        app.keyPressed(null);
+        app.delay(2000);
+
+        assertEquals(0, app.CurrentPlayer.turretAngle);
+
+        app.delay(2000);
+
+        app.CurrentPlayer.turretAngle = (float)Math.toRadians(180);
+        app.delay(1000);
+        app.key = App.CODED;
+        app.key = App.DOWN;
+        app.delay(1000);
+        app.keyPressed(null);
+        app.delay(2000);
+
+        assertEquals((float)Math.toRadians(180), app.CurrentPlayer.turretAngle);
+        app.delay(1000);
+    }
+
+    @Test
+    void testWind(){
         App app = new App();
         app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(1000);
         app.playingOnBoard = new ArrayList<player>();
+        int weirdWind = -40;
+        app.delay(1000);
+        app.Wind = weirdWind;
         app.delay(2000);
         app.setup();
-        app.delay(5000);
+        app.delay(2000);
+        app.Wind = weirdWind;
+        app.key = ' ';
+        app.keyPressed(null);
+        app.delay(2000);
+
+        assertNotEquals(weirdWind, app.Wind);
+
+        app.delay(2000);
+        weirdWind = +40;
+        app.delay(1000);
+        app.Wind = weirdWind;
+        
+        app.key = ' ';
+        app.keyPressed(null);
+        app.delay(2000);
+
+        assertNotEquals(weirdWind, app.Wind);
+        app.delay(1000);
+    }
+
+    @Test
+    void testCombatDeath(){
+        App app = new App();
+        app.delay(2000);
+        PApplet.runSketch(new String[] { "Tanks" }, app);
+        app.delay(2000);
+        app.playingOnBoard = new ArrayList<player>();
+        app.delay(2000);
+        app.setup();
+        app.delay(2000);
+
+        app.playingOnBoard.get(3).health = 10;
+        app.delay(1000);
 
         app.CurrentPlayer = app.playingOnBoard.get(2);
         app.delay(2000);
@@ -318,9 +516,120 @@ public class SampleTest {
         app.key = ' ';
         app.keyPressed(null);
 
-        app.delay(3000);
+        app.delay(2000);
+
+        assertEquals(30, previousPlayer.score);
+        app.delay(1000);
+    }
+
+    @Test
+    void testCombat(){
+        App app = new App();
+        app.delay(2000);
+        PApplet.runSketch(new String[] { "Tanks" }, app);
+        app.delay(2000);
+        app.playingOnBoard = new ArrayList<player>();
+        app.delay(2000);
+        app.setup();
+        app.delay(2000);
+
+        app.playingOnBoard.get(3).shield = 1;
+        app.playingOnBoard.get(3).health = 10;
+        app.delay(1000);
+
+        app.CurrentPlayer = app.playingOnBoard.get(2);
+        app.delay(2000);
+        app.CurrentPlayer.turretAngle = 0;
+        app.delay(1000);
+        app.CurrentPlayer.turretCoord = new PVector((float)670.9936, (float)362.938);
+        app.delay(1000);
+        app.CurrentPlayer.power = 75;
+        app.delay(1000);
+
+        player previousPlayer = app.CurrentPlayer;
+
+        app.delay(1000);
+        app.key = ' ';
+        app.keyPressed(null);
+
+        app.delay(2000);
+
+        assertEquals(0, previousPlayer.score);
+        app.delay(1000);
+    }
+
+    @Test
+    void testCombatNoParachute(){
+        App app = new App();
+        app.delay(1000);
+        PApplet.runSketch(new String[] { "Tanks" }, app);
+        app.delay(1000);
+        app.playingOnBoard = new ArrayList<player>();
+        app.delay(2000);
+        app.setup();
+        app.delay(2000);
+
+        
+        app.playingOnBoard.get(3).parachutesLeft = 0;
+        app.playingOnBoard.get(3).power = 90;
+        app.delay(1000);
+
+        app.CurrentPlayer = app.playingOnBoard.get(2);
+        app.delay(2000);
+        app.CurrentPlayer.turretAngle = 0;
+        app.delay(1000);
+        app.CurrentPlayer.turretCoord = new PVector((float)670.9936, (float)362.938);
+        app.delay(1000);
+        app.CurrentPlayer.power = 75;
+        app.delay(1000);
+
+        player previousPlayer = app.CurrentPlayer;
+
+        app.delay(1000);
+        app.key = ' ';
+        app.keyPressed(null);
+
+        app.delay(2000);
 
         assertNotEquals(0, previousPlayer.score);
+        app.delay(1000);
+    }
+
+    @Test
+    void furtherCombatTesting(){
+        App app = new App();
+        app.delay(2000);
+        PApplet.runSketch(new String[] { "Tanks" }, app);
+        app.delay(2000);
+        app.playingOnBoard = new ArrayList<player>();
+        app.delay(2000);
+        app.setup();
+        app.delay(2000);
+
+        app.playingOnBoard.get(3).power = 90;
+        app.delay(1000);
+        app.CurrentPlayer = app.playingOnBoard.get(2);
+        app.delay(2000);
+        app.CurrentPlayer.turretAngle = 0;        
+        app.delay(1000);
+        app.CurrentPlayer.x = 667;
+        app.CurrentPlayer.y = 413.4375f;
+        app.delay(1000);
+        app.CurrentPlayer.turretCoord = new PVector((float)697.9624, (float)412.37643);
+        app.delay(1000);
+        app.CurrentPlayer.power = 75;
+        app.delay(1000);
+
+        player previousPlayer = app.CurrentPlayer;
+
+        app.delay(1000);
+        app.key = ' ';
+        app.keyPressed(null);
+
+        app.delay(2000);
+
+        assertEquals(0, previousPlayer.score);
+        app.delay(1000);
     }
 
     
@@ -354,17 +663,35 @@ public class SampleTest {
         app.draw();
         app.delay(2000);
         assertEquals(1, app.stageManagerINT, "Current player should change after space bar press.");
+        app.delay(1000);
     }
 
 
     @Test
     void testPowerChanging(){
         App app = new App();
+        app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
+        app.delay(1000);
         app.setup();
-        app.delay(5000);
+        app.delay(2000);
 
-        //KeyEvent event = new KeyEvent(app, System.currentTimeMillis(), KeyEvent.PRESS, 0, 'W', java.awt.event.KeyEvent.VK_W);
+        
+        app.CurrentPlayer.power = 100;
+        app.key = 'W';
+        app.keyPressed(null);
+        app.delay(2000);
+        assertEquals(100, app.CurrentPlayer.power);
+
+        app.delay(2000);
+        app.CurrentPlayer.power = 0;
+        app.key = 'S';
+        app.keyPressed(null);
+        app.delay(2000);
+        assertEquals(0, app.CurrentPlayer.power);
+        app.delay(1000);
+
+        app.CurrentPlayer.power = 50;
         app.key = 'w';
         app.keyPressed(null);
         app.delay(2000);
@@ -375,6 +702,7 @@ public class SampleTest {
         app.keyPressed(null);
         app.delay(2000);
         assertEquals(50, app.CurrentPlayer.power);
+        app.delay(1000);
     }
 
 }

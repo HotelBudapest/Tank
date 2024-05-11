@@ -37,12 +37,7 @@ public class Projectile extends App{
 
     public int getWind(){
         int change = (random.nextInt(11)-5);
-        if ((Wind + change > 35) || (Wind + change < -35)){
-            return 0;
-        }
-        else{
-            return change;
-        }
+        return change;
     }
 
     public void display(PApplet app) {

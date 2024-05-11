@@ -49,6 +49,7 @@ public class App extends PApplet {
 
     ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
     public int Wind = random.nextInt(71) - 35;
+    public boolean testing;
 
     String trees;
     public PImage treepic;
@@ -99,6 +100,9 @@ public class App extends PApplet {
 
         JSONArray level = json.getJSONArray("levels");
         JSONObject current = level.getJSONObject(stageManagerINT%3);
+        if (testing){
+            current = level.getJSONObject(3);
+        }
         layout = current.getString("layout");
         backgroundImage = current.getString("background");
         String[] foregroundColour = current.getString("foreground-colour").split(",");
@@ -255,11 +259,11 @@ public class App extends PApplet {
         System.out.println(pastPlayerScores.toString());
         noLoop();
         stageManagerINT++;
-        if (stageManagerINT >= 3){
-            sortPlayers(backupForEndGame);
-            isgameOver = true;
-            HUD.displayEndGame(this, 0);
-        }
+        // if (stageManagerINT >= 3){
+        //     sortPlayers(backupForEndGame);
+        //     isgameOver = true;
+        //     HUD.displayEndGame(this, 0);
+        // }
         turnManagerINT = 0;
         board = new int[32][32];
         treesLs = new ArrayList<Integer>();
@@ -480,9 +484,7 @@ public class App extends PApplet {
                 Projectile proj = projectiles.get(s);
                 proj.update();
                 proj.display(this);
-                //System.out.println("Projectile of: " + proj.PlayerThatFired.type);
-                //System.out.println(explosiveCoords.get(proj.x));
-                //System.out.println(proj.PlayerThatFired.turretCoord);
+                //System.out.println(proj.PlayerThatFired.turretCoord + " " + proj.PlayerThatFired.x + " " + proj.PlayerThatFired.y);
                 try{
                     if (proj.y >= Terrain.terrainForExplosion.get((int) proj.x)) {
                         explosion.alterTerrain(this, proj);

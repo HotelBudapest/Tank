@@ -79,11 +79,6 @@ public class explosion extends App{
             app.playingOnBoard.remove(app.playingOnBoard.get(i));
           }
           app.playingOnBoard.get(i).isHit = true;
-          if (app.playingOnBoard.get(i).health <= 0){
-            drawExplosion(app, app.playingOnBoard.get(i).x, app.playingOnBoard.get(i).y);
-            pastPlayerScores.put(app.playingOnBoard.get(i).type, app.playingOnBoard.get(i).score);
-            app.playingOnBoard.remove(app.playingOnBoard.get(i));
-          }
         }
       }
     }

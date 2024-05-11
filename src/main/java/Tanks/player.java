@@ -57,7 +57,7 @@ public class player extends App{
             else{
                 this.turretCoord.y += 2;
                 this.y += 2;
-                if (this.shield < 1){
+                if (this.shield == 0){
                     this.health -= 1;
                 }
             }
