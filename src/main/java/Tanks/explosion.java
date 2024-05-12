@@ -12,6 +12,13 @@ public class Explosion extends App{
     static int OUTER_RADIUS = 30;
     public static float r = 30f;
 
+    /**
+   * Alters the terrain based on the impact of a projectile.
+   * This method modifies the terrain's height around the projectile's impact point to simulate an explosion.
+   *
+   * @param app The instance of the App class containing game settings and state.
+   * @param proj The projectile that has impacted the terrain.
+   */
     public static void alterTerrain(App app, Projectile proj) { 
 
       // float[] previousHeights = new float[app.playingOnBoard.size()];
@@ -38,20 +45,15 @@ public class Explosion extends App{
               finalTerrain = Terrain.terrainForExplosion.get(i);
           }
       }
-
-      // for (int k = 0; k < app.playingOnBoard.size();k++){
-      //   float prev = previousHeights[k];
-      //   System.out.println("Later height of " +  app.playingOnBoard.get(k).type + " " + Terrain.terrainForExplosion.get(app.playingOnBoard.get(k).x));
-      //   while(prev != Terrain.terrainForExplosion.get(app.playingOnBoard.get(k).x)){
-      //     app.playingOnBoard.get(k).y += 0.2f;
-      //     prev += 0.2f;
-      //   }
-      //   //app.playingOnBoard.get(k).noTerrainBelow = false;
-      //   //app.playingOnBoard.get(i).y = Terrain.terrainForExplosion.get(app.playingOnBoard.get(i).x);
-      // }
-      // app.CurrentPlayer.draw(app);
     }
 
+  /**
+   * Checks for player collisions with the explosion effect.
+   * This method adjusts player health based on proximity to the explosion and applies damage if within the blast radius.
+   *
+   * @param app The app instance managing game state and interactions.
+   * @param proj The projectile that caused the explosion.
+   */
     public static void checkPlayerCollisions(App app, Projectile proj){
       float[] hitRadiusXLeft = {proj.x - r, proj.y - r};
       float[] hitRadiusXRight = {proj.x + r, proj.y + r}; 
@@ -66,7 +68,7 @@ public class Explosion extends App{
               if (app.playingOnBoard.get(i).health < app.playingOnBoard.get(i).power){
                 app.playingOnBoard.get(i).power = app.playingOnBoard.get(i).health;
               }
-              if (app.playingOnBoard.get(i) != proj.PlayerThatFired){
+              if (app.playingOnBoard.get(i) != proj.playerThatFired){
                 proj.updatePlayerScore();
               }
             }
@@ -84,6 +86,14 @@ public class Explosion extends App{
       }
     }
 
+  /**
+   * Draws an explosion animation at a specified location.
+   * The explosion is represented by concentric circles of different colors and radii.
+   *
+   * @param app The application instance used to draw the explosion.
+   * @param x The x-coordinate of the explosion center.
+   * @param y The y-coordinate of the explosion center.
+   */
     public static void drawExplosion(App app, float x, float y) {
         for (int i = 0; i < 6; i++) {
           if (i == 0 || i == 1) {

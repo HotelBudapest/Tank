@@ -6,6 +6,13 @@ public class HUD extends App{
     static long lastUpdateTime = 0;
     public static boolean started = false;
 
+
+    /**
+     * Displays various text elements on the game screen, including player turn, power, and fuel levels.
+     * This method updates dynamic text elements on the HUD during gameplay.
+     *
+     * @param app The instance of the App class, used to access game state and properties.
+     */
     public static void displayTEXTS(App app){
         app.pushStyle();
         app.fill(0);
@@ -70,6 +77,12 @@ public class HUD extends App{
         
     }
 
+    /**
+     * Displays the health bar for the current player.
+     * This bar visually represents the player's health and power levels.
+     *
+     * @param app The instance of the App class, used to access game state and properties.
+     */
     public static void displayHealthBar(App app){
         app.pushStyle();
         app.fill(0);
@@ -92,6 +105,12 @@ public class HUD extends App{
         
     }
 
+    /**
+     * Displays the scoreboard, showing scores for all players.
+     * The scoreboard is updated to reflect current scores throughout the game.
+     *
+     * @param app The instance of the App class, used to access game state and properties.
+     */
     public static void displayScoreBoard(App app){
         app.pushStyle();
         app.stroke(0);

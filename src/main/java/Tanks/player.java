@@ -20,6 +20,14 @@ public class Player extends App implements Turret{
     public int fuel;
     public boolean noTerrainBelow;
 
+    /**
+     * Constructor for the Player class.
+     *
+     * @param x The initial x-coordinate of the player.
+     * @param y The initial y-coordinate of the player.
+     * @param typ The type or identifier for the player.
+     * @param color An array of integers representing RGB color values for the player.
+     */
     public Player(int x, float y, String typ, int[] color){ //, PVector coordinateL, PVector coordinateR
         this.x = x;
         this.y = y;
@@ -32,6 +40,11 @@ public class Player extends App implements Turret{
         this.fuel = 250;
     }
 
+    /**
+     * Draws the player and its attributes on the game canvas.
+     *
+     * @param app The app instance used for drawing.
+     */
     public void draw(App app){
         // if (noTerrainBelow){
         //     if (this.y ==  Terrain.terrainForExplosion.get(this.x)){
@@ -78,6 +91,11 @@ public class Player extends App implements Turret{
         app.rect((this.x-9), (this.y + 3), 21, 6, 10);
     }
 
+    /**
+     * Draws the player's turret on the game canvas.
+     *
+     * @param app The app instance used for drawing.
+     */
     public void drawTurret(App app){
         app.stroke(0);
         app.strokeWeight(4);
@@ -86,6 +104,11 @@ public class Player extends App implements Turret{
         app.noStroke();
     }
 
+    /**
+     * Draws a line representation for the player, typically used for debugging.
+     *
+     * @param app The PApplet instance used for drawing.
+     */
     public void drawLine(PApplet app){
         app.stroke(0);
         app.strokeWeight(2);
@@ -98,12 +121,13 @@ public class Player extends App implements Turret{
         app.noStroke();
     }
 
+    /**
+     * Moves the player to a new position.
+     *
+     * @param changedX The new x-coordinate of the player.
+     * @param changedY The new y-coordinate of the player.
+     */
     public void move(int changedX, float changedY){
-        /*int changedX;
-        int changedY;
-        if (direction == 'L') {
-            changedX = -1;
-        }*/
         if (fuel>0){
             int changeForTurretX = this.x - changedX;
             float changeForTurretY = this.y - changedY;
@@ -114,6 +138,12 @@ public class Player extends App implements Turret{
         }
     }
 
+    /**
+     * Moves the player's turret to a new angle.
+     *
+     * @param changedX The new x-coordinate for the turret.
+     * @param changedY The new y-coordinate for the turret.
+     */
     public void moveTurret(float changedX, float changedY){
         this.turretCoord.x = changedX;
         this.turretCoord.y = changedY;

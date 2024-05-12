@@ -73,6 +73,9 @@ public class App extends PApplet{
 	
 	// Feel free to add any additional methods or attributes you want. Please put classes in different files.
 
+    /**
+     * Constructor for the App class. Sets the configuration path.
+     */
     public App() {
         this.configPath = "config.json";
     }
@@ -249,6 +252,10 @@ public class App extends PApplet{
 
     }
 
+    /**
+     * Changes the current level and updates game state. This method is called when all players are done
+     * or the level needs to be reset.
+     */
     public void changeLevel(){
         for (int i = 0; i < playingOnBoard.size(); i++){
             pastPlayerScores.put(playingOnBoard.get(i).type, playingOnBoard.get(i).score);
@@ -274,12 +281,17 @@ public class App extends PApplet{
         loop();
     }
 
+    /**
+     * Manages turn transitions between players.
+     * @param n The index of the next player.
+     */
     public void manageTurns(int n){
         CurrentPlayer = playingOnBoard.get(n%(playingOnBoard.size())); 
     }
 
     /**
-     * Receive key pressed signal from the keyboard.
+     * Handles key pressed events for game controls including player movement and actions.
+     * @param event The key event that was triggered.
      */
 	@Override
     public void keyPressed(KeyEvent event){
@@ -371,6 +383,9 @@ public class App extends PApplet{
         }
     }
 
+    /**
+     * Restarts the game by resetting game states and reloading the level.
+     */
     public void restartGame(){
         noLoop();
         turnManagerINT = 0;
@@ -405,6 +420,10 @@ public class App extends PApplet{
 
     }
 
+    /**
+     * Sorts players based on their scores from highest to lowest.
+     * @param players The list of players to be sorted.
+     */
     public void sortPlayers(ArrayList<Player> players){
         for (int i = 1; i < players.size(); i++) {
             Player current = players.get(i);

@@ -15,6 +15,14 @@ public class Terrain{
     public ArrayList<Integer> widths = new ArrayList<Integer>();
     public static ArrayList<Float> terrainForExplosion = new ArrayList<Float>();
 
+    /**
+     * Constructor for the Terrain class.
+     *
+     * @param trees A list of tree locations as integers representing their x-coordinates.
+     * @param treeLoc The image used to represent trees in the terrain.
+     * @param player A list of integers representing the x-coordinates of players on the terrain.
+     * @param heights A list of integers representing the initial heights of the terrain.
+     */
     public Terrain(ArrayList<Integer> trees, PImage treeLoc,ArrayList<Integer> player, ArrayList<Integer> heights){
         this.treesLs = trees;
         this.treeLoc = treeLoc;
@@ -22,26 +30,11 @@ public class Terrain{
         this.heights = heights;
     }
 
+    /**
+     * Processes the heights list to create a smoothed terrain profile.
+     * This method uses a moving average to smooth the terrain heights.
+     */
     public void smoothArray(){
-            // ArrayList<PVector> avg = new ArrayList<PVector>();
-            // for (int i = 0; i < this.terrainCoordinates.size(); i++){
-            //     if ((i < this.terrainCoordinates.size() - 4)){
-            //         float x1 = this.terrainCoordinates.get(i).x;
-                    
-            //         float y1 = this.terrainCoordinates.get(i).y;
-            //         float y2 = this.terrainCoordinates.get(i+1).y;
-            //         float y3 = this.terrainCoordinates.get(i+3).y;
-            //         float y4 = this.terrainCoordinates.get(i+4).y;
-            //         float avgy = (y1+y2+y3+y4)/4;
-    
-            //         avg.add(new PVector(x1, avgy));
-                    
-            //     }
-            //     else{
-            //         avg.add(this.terrainCoordinates.get(i));
-            //     }
-            // }
-
         ArrayList<Float> initialHeights = new ArrayList<Float>();
         for (int x = 0; x < this.heights.size(); x++) {
             float sum = 0;
@@ -72,12 +65,22 @@ public class Terrain{
 
     }
 
+    /**
+     * Draws the terrain on the provided PApplet drawing surface.
+     *
+     * @param app The PApplet surface on which to draw the terrain.
+     */
     public void draw(PApplet app){
         for (int x =0; x < terrainForExplosion.size(); x++){
             app.rect(this.widths.get(x), terrainForExplosion.get(x), 1,app.height - terrainForExplosion.get(x));
         }
     }
 
+    /**
+     * Retrieves the x-coordinates for all players currently on the terrain.
+     *
+     * @return An array of integers representing the x-coordinates of all players.
+     */
     public int[] getPlayerCoordsX(){
         int[] result = new int[this.players.size()];
         for (int i = 0; i < this.players.size(); i++){
@@ -87,6 +90,11 @@ public class Terrain{
         return result;
     }
 
+    /**
+     * Retrieves the y-coordinates for all players currently on the terrain.
+     *
+     * @return An array of floats representing the y-coordinates just above the terrain for all players.
+     */
     public float[] getPlayerCoordsY(){
         float[] result = new float[this.players.size()];
         for (int i = 0; i < this.players.size(); i++){
@@ -95,6 +103,11 @@ public class Terrain{
         return result;
     }
 
+    /**
+     * Draws trees on the terrain using the specified image for each tree.
+     *
+     * @param app The App instance on which to draw the trees.
+     */
     public void drawTrees(App app){
         if (this.treeLoc != null){
             for (int i = 0; i < this.treesLs.size(); i++){
