@@ -2,7 +2,7 @@ package Tanks;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class player extends App{
+public class Player extends App implements Turret{
     //public PVector coordinates;
     public float y;
     public int x;
@@ -20,7 +20,7 @@ public class player extends App{
     public int fuel;
     public boolean noTerrainBelow;
 
-    public player(int x, float y, String typ, int[] color){ //, PVector coordinateL, PVector coordinateR
+    public Player(int x, float y, String typ, int[] color){ //, PVector coordinateL, PVector coordinateR
         this.x = x;
         this.y = y;
         this.type = typ;
@@ -32,7 +32,7 @@ public class player extends App{
         this.fuel = 250;
     }
 
-    public void draw(PApplet app){
+    public void draw(App app){
         // if (noTerrainBelow){
         //     if (this.y ==  Terrain.terrainForExplosion.get(this.x)){
         //         noTerrainBelow = false;
@@ -57,16 +57,28 @@ public class player extends App{
             else{
                 this.turretCoord.y += 2;
                 this.y += 2;
-                if (this.shield == 0){
-                    this.health -= 1;
+                if (this.shield < 1){
+                    this.health -= 2;
                 }
+                if (this.health <= 0){
+                    Explosion.drawExplosion(app, this.x, this.y);
+                    pastPlayerScores.put(this.type, this.score);
+                    app.playingOnBoard.remove(this);
+                  }
             }
+        }
+        if (this.shield > 0){
+            app.fill(0, 0, 230, 90);
+            app.ellipse(this.x, this.y, CELLSIZE, CELLSIZE);
         }
         app.noStroke();
         app.fill(this.color[0], this.color[1], this.color[2]);
         app.rect((this.x-9) + 2, (this.y), 16, 6, 10);
         app.fill(this.color[0], this.color[1], this.color[2]);
         app.rect((this.x-9), (this.y + 3), 21, 6, 10);
+    }
+
+    public void drawTurret(App app){
         app.stroke(0);
         app.strokeWeight(4);
         //app.line(this.x, this.y, this.x, this.y - 10);

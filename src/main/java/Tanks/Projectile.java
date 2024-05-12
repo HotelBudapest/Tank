@@ -10,10 +10,10 @@ public class Projectile extends App{
     float velocity;
     int[] color;
     float addedGravity = 0;
-    player PlayerThatFired;
+    Player PlayerThatFired;
     boolean projectileHasHit;
 
-    public Projectile(float x, float y, float power, float angle, int[] color, player PlayerThatFired){
+    public Projectile(float x, float y, float power, float angle, int[] color, Player PlayerThatFired){
         this.x = x;
         this.y = y;
         this.power = power;

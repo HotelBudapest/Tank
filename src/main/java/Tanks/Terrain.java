@@ -6,7 +6,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 
-public class Terrain  extends App{
+public class Terrain{
     ArrayList<PVector> terrainCoordinates = new ArrayList<PVector>();
     ArrayList<Integer> treesLs = new ArrayList<Integer>();
     ArrayList<Integer> players = new ArrayList<Integer>();
@@ -42,9 +42,7 @@ public class Terrain  extends App{
             //     }
             // }
 
-        ArrayList<Float> smoothedHeights1 = new ArrayList<Float>();
-        ArrayList<Float> smoothedHeights2 = new ArrayList<Float>();
-
+        ArrayList<Float> initialHeights = new ArrayList<Float>();
         for (int x = 0; x < this.heights.size(); x++) {
             float sum = 0;
             int count = 0;
@@ -52,20 +50,21 @@ public class Terrain  extends App{
                 sum += this.heights.get(i);
                 count++;
             }
-        smoothedHeights1.add(sum / count);
+            initialHeights.add(sum / count);
         }
 
-        for (int x = 0; x < smoothedHeights1.size(); x++) {
+        ArrayList<Float> finalHeights = new ArrayList<Float>();
+        for (int x = 0; x < initialHeights.size(); x++) {
             float sum2 = 0;
             int count2 = 0;
-            for (int i = x; i < x + 32 && i < smoothedHeights1.size(); i++) {
-                sum2 += smoothedHeights1.get(i);
+            for (int i = x; i < x + 32 && i < initialHeights.size(); i++) {
+                sum2 += initialHeights.get(i);
                 count2++;
             }
-                smoothedHeights2.add(sum2 / count2);
+            finalHeights.add(sum2 / count2);
         }
 
-        terrainForExplosion = smoothedHeights2;
+        terrainForExplosion = finalHeights;
         
         for (int i = 0; i < terrainForExplosion.size(); i++){
             this.widths.add(i);
@@ -96,11 +95,11 @@ public class Terrain  extends App{
         return result;
     }
 
-    public void drawTrees(PApplet app){
+    public void drawTrees(App app){
         if (this.treeLoc != null){
             for (int i = 0; i < this.treesLs.size(); i++){
                 int current = treesLs.get(i);
-                app.image(treeLoc, widths.get(current)-16, terrainForExplosion.get(current)-30, CELLSIZE, CELLSIZE);
+                app.image(treeLoc, widths.get(current)-16, terrainForExplosion.get(current)-30, app.CELLSIZE, app.CELLSIZE);
             }
         }
     }

@@ -1,18 +1,15 @@
 package Tanks;
 
-import java.util.*;
-
-import processing.core.PApplet;
-public class explosion extends App{
-    public static float terrainHeightBefore = 0.0f;
-    public static float terrainHeightAfter = 0.0f;
+public class Explosion extends App{
+    public static float initialTerrain = 0.0f;
+    public static float finalTerrain = 0.0f;
     public static final int[] INNER = new int[] { 253, 248, 172 };
     public static final int[] MIDDLE = new int[] { 255, 135, 33 };
     public static final int[] OUTER = new int[] { 252, 1, 4 };
 
-    public static final int INNER_RADIUS = 10;
-    public static final int MIDDLE_RADIUS = 20;
-    public static final int OUTER_RADIUS = 30;
+    static int INNER_RADIUS = 10;
+    static int MIDDLE_RADIUS = 20;
+    static int OUTER_RADIUS = 30;
     public static float r = 30f;
 
     public static void alterTerrain(App app, Projectile proj) { 
@@ -30,15 +27,15 @@ public class explosion extends App{
           float semiCircleHeight = (float) Math.sqrt(Math.max(0, r * r - d * d));
           if (Terrain.terrainForExplosion.get(i)< proj.y + semiCircleHeight && Terrain.terrainForExplosion.get(i) > proj.y - semiCircleHeight) {
               
-              terrainHeightBefore = Terrain.terrainForExplosion.get(i);
+              initialTerrain = Terrain.terrainForExplosion.get(i);
               Terrain.terrainForExplosion.set(i,proj.y + semiCircleHeight);
-              terrainHeightAfter = Terrain.terrainForExplosion.get(i);
+              finalTerrain = Terrain.terrainForExplosion.get(i);
           } else if (Terrain.terrainForExplosion.get(i) < proj.y - semiCircleHeight) {
 
-              terrainHeightBefore = Terrain.terrainForExplosion.get(i);
+              initialTerrain = Terrain.terrainForExplosion.get(i);
               Terrain.terrainForExplosion.set(i, Terrain.terrainForExplosion.get(i) + 2 * semiCircleHeight);
               Terrain.terrainForExplosion.set(i, Math.min(Terrain.terrainForExplosion.get(i), proj.y + semiCircleHeight));
-              terrainHeightAfter = Terrain.terrainForExplosion.get(i);
+              finalTerrain = Terrain.terrainForExplosion.get(i);
           }
       }
 
@@ -63,22 +60,26 @@ public class explosion extends App{
         if ((app.playingOnBoard.get(i).x >= hitRadiusXLeft[0]) && (app.playingOnBoard.get(i).x <= hitRadiusXRight[0])){ //  && (app.playingOnBoard.get(i).y >= hitRadiusXLeft[1]) && (app.playingOnBoard.get(i).y <= hitRadiusXRight[1])
           if ((app.playingOnBoard.get(i).y >= hitRadiusXLeft[1]) && (app.playingOnBoard.get(i).y <= hitRadiusXRight[1])){
             if ((app.playingOnBoard.get(i).shield == 0)){
-              app.playingOnBoard.get(i).health -= 30;
+              int distanceFromExplosion = (int)Math.sqrt(Math.pow(proj.x - app.playingOnBoard.get(i).x, 2) + Math.pow(proj.y - app.playingOnBoard.get(i).y, 2));;
+              int damage = 60 - distanceFromExplosion;
+              app.playingOnBoard.get(i).health -= damage;
               if (app.playingOnBoard.get(i).health < app.playingOnBoard.get(i).power){
                 app.playingOnBoard.get(i).power = app.playingOnBoard.get(i).health;
               }
-              proj.updatePlayerScore();
+              if (app.playingOnBoard.get(i) != proj.PlayerThatFired){
+                proj.updatePlayerScore();
+              }
             }
             else{
               app.playingOnBoard.get(i).shield--;
             }
           }
-          if (app.playingOnBoard.get(i).health <= 0){
-            drawExplosion(app, app.playingOnBoard.get(i).x, app.playingOnBoard.get(i).y);
-            pastPlayerScores.put(app.playingOnBoard.get(i).type, app.playingOnBoard.get(i).score);
-            app.playingOnBoard.remove(app.playingOnBoard.get(i));
-          }
           app.playingOnBoard.get(i).isHit = true;
+        }
+        if (app.playingOnBoard.get(i).health <= 0){
+          drawExplosion(app, app.playingOnBoard.get(i).x, app.playingOnBoard.get(i).y);
+          pastPlayerScores.put(app.playingOnBoard.get(i).type, app.playingOnBoard.get(i).score);
+          app.playingOnBoard.remove(app.playingOnBoard.get(i));
         }
       }
     }

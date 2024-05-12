@@ -2,7 +2,6 @@ package Tanks;
 
 import processing.core.PApplet;
 import processing.core.PImage;
-import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 import processing.event.KeyEvent;
@@ -11,9 +10,7 @@ import processing.event.MouseEvent;
 import java.io.*;
 import java.util.*;
 
-import jogamp.graph.curve.tess.Loop;
-
-public class App extends PApplet {
+public class App extends PApplet{
 
     public static final int CELLSIZE = 32; //8;
     public static final int CELLHEIGHT = 32;
@@ -34,10 +31,10 @@ public class App extends PApplet {
 
     //ArrayList<PVector> test = new ArrayList<PVector>();
     HashMap<String, Integer> playerLs = new HashMap<String, Integer>();
-    ArrayList<player> playingOnBoard = new ArrayList<player>();
+    ArrayList<Player> playingOnBoard = new ArrayList<Player>();
     public HashMap<String ,int[]> playerColorValues = new HashMap<String ,int[]>();
-    player CurrentPlayer;
-    ArrayList<player> backupForEndGame = new ArrayList<player>();
+    Player CurrentPlayer;
+    ArrayList<Player> backupForEndGame = new ArrayList<Player>();
 
     
     public static HashMap<String, Integer> pastPlayerScores = new HashMap<String, Integer>();
@@ -56,7 +53,7 @@ public class App extends PApplet {
     public PImage fuelIMG;
     public PImage Wind1;
     public PImage Wind2;
-    player previousPlayer;
+    Player previousPlayer;
 
     public static PImage parachuteIMG;
     protected int R;
@@ -216,29 +213,29 @@ public class App extends PApplet {
             for (int s =0; s < coordsY.length; s++){
                 if (s == 0){
                     String srt = "A";
-                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
+                    playingOnBoard.add(new Player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
                 }
                 else if (s == 1){
                     String srt = "B";
-                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
+                    playingOnBoard.add(new Player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
                 }
                 else if (s == 2){
                     String srt = "C";
-                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
+                    playingOnBoard.add(new Player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
                 }
                 else if (s == 3){
                     String srt = "D";
-                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
+                    playingOnBoard.add(new Player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
                 }
                 else if (s == 4){
                     String srt = "E";
-                    playingOnBoard.add(new player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
+                    playingOnBoard.add(new Player(coordsX[s], coordsY[s], srt, playerColorValues.get(srt)));
                 }
                 System.out.println(coordsX[s] + " " + coordsY[s] + " " + playingOnBoard.get(s).type);
             }
 
             CurrentPlayer = playingOnBoard.get(0);
-            backupForEndGame = new ArrayList<player>(playingOnBoard);
+            backupForEndGame = new ArrayList<Player>(playingOnBoard);
 
             reader.close();
 
@@ -269,7 +266,7 @@ public class App extends PApplet {
         treesLs = new ArrayList<Integer>();
         terrainHeightsInitial = new ArrayList<Integer>();
         projectiles = new ArrayList<Projectile>();
-        playingOnBoard = new ArrayList<player>();
+        playingOnBoard = new ArrayList<Player>();
         setup();
         for (int i = 0; i < playingOnBoard.size(); i++){
             playingOnBoard.get(i).score = pastPlayerScores.get(playingOnBoard.get(i).type);
@@ -297,7 +294,6 @@ public class App extends PApplet {
             }
             projectiles.add(projToBeAdded);
             turnManagerINT++;
-            manageTurns(turnManagerINT);
         }
         if ((key == CODED) && (!isgameOver)){
             if ((keyCode == LEFT) && (CurrentPlayer.x - 3 > 3)){ // terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).x - 0.3f, terrain.terrainCoordinates.get(terrain.players.get(turnManagerINT%(playingOnBoard.size())) - 4).y - 0.3f
@@ -383,8 +379,8 @@ public class App extends PApplet {
         terrainHeightsInitial = new ArrayList<Integer>();
         arektaManager = 0;
         projectiles = new ArrayList<Projectile>();
-        playingOnBoard = new ArrayList<player>();
-        backupForEndGame = new ArrayList<player>();
+        playingOnBoard = new ArrayList<Player>();
+        backupForEndGame = new ArrayList<Player>();
         setup();
         loop();
     }
@@ -409,9 +405,9 @@ public class App extends PApplet {
 
     }
 
-    public void sortPlayers(ArrayList<player> players){
+    public void sortPlayers(ArrayList<Player> players){
         for (int i = 1; i < players.size(); i++) {
-            player current = players.get(i);
+            Player current = players.get(i);
             int j = i - 1;
             while (j >= 0 && players.get(j).score < current.score) {
                 players.set(j + 1, players.get(j));
@@ -473,8 +469,9 @@ public class App extends PApplet {
             }
 
             for (int i =0; i < playingOnBoard.size(); i++){
-                player current = playingOnBoard.get(i);
+                Player current = playingOnBoard.get(i);
                 current.draw(this);
+                current.drawTurret(this);
                 if (current == CurrentPlayer){
                     current.drawLine(this);
                 }
@@ -487,16 +484,17 @@ public class App extends PApplet {
                 //System.out.println(proj.PlayerThatFired.turretCoord + " " + proj.PlayerThatFired.x + " " + proj.PlayerThatFired.y);
                 try{
                     if (proj.y >= Terrain.terrainForExplosion.get((int) proj.x)) {
-                        explosion.alterTerrain(this, proj);
+                        Explosion.alterTerrain(this, proj);
                         noStroke();
-                        explosion.drawExplosion(this, proj.x, proj.y);
-                        explosion.checkPlayerCollisions(this, proj);
+                        Explosion.drawExplosion(this, proj.x, proj.y);
+                        Explosion.checkPlayerCollisions(this, proj);
                         projectiles.remove(s);
                     }
                 }
                 catch(IndexOutOfBoundsException e){
                     projectiles.remove(s);
                 }
+                manageTurns(turnManagerINT);
             }
             }
         }

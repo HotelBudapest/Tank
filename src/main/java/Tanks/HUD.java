@@ -42,6 +42,14 @@ public class HUD extends App{
         app.text(app.CurrentPlayer.parachutesLeft, WIDTH/2 - 7*CELLSIZE, CELLSIZE + 35);
         app.popStyle();
 
+        app.pushStyle();
+        app.fill(0, 0, 230, 90);
+        app.ellipse(WIDTH/2 - 8*CELLSIZE + 12, CELLSIZE + 55, 15, 15);
+        app.fill(0);
+        app.textSize(16);
+        app.text(app.CurrentPlayer.shield, WIDTH/2 - 7*CELLSIZE, CELLSIZE + 62);
+        app.popStyle();
+
         if (app.Wind >= 0){
             app.pushStyle();
             app.image(app.Wind1, WIDTH - 3*CELLSIZE, 10, 65, 65);
@@ -97,7 +105,7 @@ public class HUD extends App{
         app.rect(WIDTH - 6*CELLSIZE, 4*CELLSIZE,  180, 110);
         int j = 25;
         for (int i = 0; i < app.playingOnBoard.size(); i ++){
-            player current = app.playingOnBoard.get(i);
+            Player current = app.playingOnBoard.get(i);
             app.fill(current.color[0], current.color[1], current.color[2]);
             app.textSize(15);
             app.text("Player "+ current.type, WIDTH - 6*CELLSIZE + 15, 4*CELLSIZE + j); 
@@ -110,7 +118,7 @@ public class HUD extends App{
     }
 
     public static void displayEndGame(App app, int i){
-        player current = app.backupForEndGame.get(i);
+        Player current = app.backupForEndGame.get(i);
         app.fill(current.color[0], current.color[1], current.color[2]);
         app.textSize(40);
         app.text("Player " + current.type, WIDTH/2- 6*CELLSIZE , HEIGHT/2 + (i) * 2 * CELLSIZE - 15);

@@ -132,7 +132,7 @@ public class SampleTest {
         
         app.delay(2000);
         app.turnManagerINT = 0;
-        player expectedPlayer = app.playingOnBoard.get(1);
+        Player expectedPlayer = app.playingOnBoard.get(1);
         app.delay(3000);
         app.key = App.CODED;
         app.keyCode = App.UP;
@@ -145,7 +145,7 @@ public class SampleTest {
         app.key = ' ';
         app.keyPressed(null); 
         app.delay(2000);
-        player newPlayer = app.CurrentPlayer;
+        Player newPlayer = app.CurrentPlayer;
 
         app.delay(1000);
         assertEquals(expectedPlayer, newPlayer ,"Current player should change after space bar press.");
@@ -164,7 +164,7 @@ public class SampleTest {
         
         app.delay(2000);
         app.turnManagerINT = 0;
-        player expectedPlayer = app.playingOnBoard.get(1);
+        Player expectedPlayer = app.playingOnBoard.get(1);
         app.delay(3000);
         app.key = App.CODED;
         app.keyCode = App.DOWN;
@@ -180,7 +180,7 @@ public class SampleTest {
         app.key = ' ';
         app.keyPressed(null); 
         app.delay(2000);
-        player newPlayer = app.CurrentPlayer;
+        Player newPlayer = app.CurrentPlayer;
         System.out.println(app.CurrentPlayer);
 
         assertEquals(expectedPlayer, newPlayer ,"Current player should change after space bar press.");
@@ -194,7 +194,7 @@ public class SampleTest {
         app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(1000);
-        app.playingOnBoard = new ArrayList<player>();
+        app.playingOnBoard = new ArrayList<Player>();
         app.delay(2000);
         app.setup();
         app.delay(3000);
@@ -243,7 +243,7 @@ public class SampleTest {
         app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(1000);
-        app.playingOnBoard = new ArrayList<player>();
+        app.playingOnBoard = new ArrayList<Player>();
         app.delay(2000);
         app.setup();
         app.delay(3000);
@@ -373,7 +373,7 @@ public class SampleTest {
         app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(1000);
-        app.playingOnBoard = new ArrayList<player>();
+        app.playingOnBoard = new ArrayList<Player>();
         app.delay(2000);
         app.setup();
         app.delay(3000);
@@ -399,7 +399,7 @@ public class SampleTest {
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.stageManagerINT=2;
         app.delay(2000);
-        app.playingOnBoard = new ArrayList<player>();
+        app.playingOnBoard = new ArrayList<Player>();
         app.delay(2000);
         app.setup();
         app.delay(3000);
@@ -424,19 +424,18 @@ public class SampleTest {
         App app = new App();        
         app.delay(2000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
-        app.delay(2000);
-        app.playingOnBoard = new ArrayList<player>();
-        app.delay(2000);
-        app.setup();
         app.delay(3000);
 
-        app.CurrentPlayer.turretAngle = 0;
-        app.delay(1000);
+        app.CurrentPlayer.turretAngle = (float)Math.toRadians(0);
+        app.delay(2000);
         app.key = App.CODED;
         app.key = App.UP;
-        app.delay(1000);
-        app.keyPressed(null);
         app.delay(2000);
+        app.key = App.CODED;
+        app.key = App.UP;
+        app.delay(2000);
+        app.keyPressed(null);
+        app.delay(1000);
 
         assertEquals(0, app.CurrentPlayer.turretAngle);
 
@@ -444,6 +443,9 @@ public class SampleTest {
 
         app.CurrentPlayer.turretAngle = (float)Math.toRadians(180);
         app.delay(1000);
+        app.key = App.CODED;
+        app.key = App.DOWN;
+        app.delay(2000);
         app.key = App.CODED;
         app.key = App.DOWN;
         app.delay(1000);
@@ -460,7 +462,7 @@ public class SampleTest {
         app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(1000);
-        app.playingOnBoard = new ArrayList<player>();
+        app.playingOnBoard = new ArrayList<Player>();
         int weirdWind = -40;
         app.delay(1000);
         app.Wind = weirdWind;
@@ -493,7 +495,7 @@ public class SampleTest {
         app.delay(2000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(2000);
-        app.playingOnBoard = new ArrayList<player>();
+        app.playingOnBoard = new ArrayList<Player>();
         app.delay(2000);
         app.setup();
         app.delay(2000);
@@ -510,7 +512,7 @@ public class SampleTest {
         app.CurrentPlayer.power = 75;
         app.delay(1000);
 
-        player previousPlayer = app.CurrentPlayer;
+        Player previousPlayer = app.CurrentPlayer;
 
         app.delay(1000);
         app.key = ' ';
@@ -528,7 +530,7 @@ public class SampleTest {
         app.delay(2000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(2000);
-        app.playingOnBoard = new ArrayList<player>();
+        app.playingOnBoard = new ArrayList<Player>();
         app.delay(2000);
         app.setup();
         app.delay(2000);
@@ -546,7 +548,7 @@ public class SampleTest {
         app.CurrentPlayer.power = 75;
         app.delay(1000);
 
-        player previousPlayer = app.CurrentPlayer;
+        Player previousPlayer = app.CurrentPlayer;
 
         app.delay(1000);
         app.key = ' ';
@@ -561,17 +563,20 @@ public class SampleTest {
     @Test
     void testCombatNoParachute(){
         App app = new App();
-        app.delay(1000);
+        app.delay(2000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
-        app.delay(1000);
-        app.playingOnBoard = new ArrayList<player>();
+        app.delay(2000);
+        app.playingOnBoard = new ArrayList<Player>();
         app.delay(2000);
         app.setup();
         app.delay(2000);
 
-        
+        app.playingOnBoard.get(2).shield = 1;
         app.playingOnBoard.get(3).parachutesLeft = 0;
         app.playingOnBoard.get(3).power = 90;
+        app.playingOnBoard.get(3).health = 65;
+        app.Wind =0;
+        app.playingOnBoard.get(3).shield = 0;
         app.delay(1000);
 
         app.CurrentPlayer = app.playingOnBoard.get(2);
@@ -583,7 +588,7 @@ public class SampleTest {
         app.CurrentPlayer.power = 75;
         app.delay(1000);
 
-        player previousPlayer = app.CurrentPlayer;
+        Player previousPlayer = app.CurrentPlayer;
 
         app.delay(1000);
         app.key = ' ';
@@ -601,7 +606,7 @@ public class SampleTest {
         app.delay(2000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(2000);
-        app.playingOnBoard = new ArrayList<player>();
+        app.playingOnBoard = new ArrayList<Player>();
         app.delay(2000);
         app.setup();
         app.delay(2000);
@@ -620,7 +625,7 @@ public class SampleTest {
         app.CurrentPlayer.power = 75;
         app.delay(1000);
 
-        player previousPlayer = app.CurrentPlayer;
+        Player previousPlayer = app.CurrentPlayer;
 
         app.delay(1000);
         app.key = ' ';
@@ -639,7 +644,7 @@ public class SampleTest {
         app.delay(1000);
         PApplet.runSketch(new String[] { "Tanks" }, app);
         app.delay(1000);
-        app.playingOnBoard = new ArrayList<player>();
+        app.playingOnBoard = new ArrayList<Player>();
         app.delay(2000);
         app.setup();
         app.delay(5000);
